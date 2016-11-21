@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Agon.Models;
+using AspNet.Security.OAuth.Spotify;
 
 namespace Agon
 {
@@ -60,8 +61,16 @@ namespace Agon
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
+            app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
+            {
+                ClientId = Configuration["SpotifyClientId"],
+                ClientSecret = Configuration["SpotifyClientSecret"],
+                SaveTokens = true
+            });
+
+
             //SpotifyClientId
-            
+
             //SpotifyClientSecret
 
             app.UseMvc(routes =>
