@@ -3,12 +3,6 @@
 @if (Model.LoggedIn)
 {
     <p>Du är inloggad som tusan med @Model.Username!</p>
-    <ol>
-        @foreach (var quiz in Model.Quizzes)
-        {
-            <li><a href="Quiz/@quiz.Name">@quiz.Name</a></li>
-        }
-    </ol>
 }
 else
 {
