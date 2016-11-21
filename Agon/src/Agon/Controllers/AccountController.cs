@@ -38,7 +38,7 @@ namespace Agon.Controllers
             return View();
         }
 
-        [AllowAnonymous]
+        /*[AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(AccountLoginVM viewModel, string returnUrl)
         {
@@ -66,6 +66,6 @@ namespace Agon.Controllers
                 return RedirectToAction(nameof(AccountController.Index));
             else
                 return Redirect(returnUrl);
-        }
+        }*/
     }
 }
