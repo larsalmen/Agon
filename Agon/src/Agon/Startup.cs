@@ -36,7 +36,7 @@ namespace Agon
         public void ConfigureServices(IServiceCollection services)
         {
             // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(Configuration.GetConnectionString("DefaultConnection"))
+            services.AddIdentityWithMongoStores(Configuration["MongoConnection"])
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
@@ -60,6 +60,10 @@ namespace Agon
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
+            //SpotifyClientId
+            
+            //SpotifyClientSecret
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -75,10 +79,10 @@ namespace Agon
             //    app.UseDeveloperExceptionPage();
             //}
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hej Värld!");
-            });
+            //app.Run(async (context) =>
+            //{
+            //    await context.Response.WriteAsync(Configuration["MongoConnection"]);
+            //});
         }
     }
 }

@@ -1,5 +1,5 @@
---temp-output:C:\Projects\AGON\Agon\src\Agon\obj\Debug\net452\
---out:C:\Projects\AGON\Agon\src\Agon\bin\Debug\net452\Agon.exe
+--temp-output:C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\obj\Debug\net452\
+--out:C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\bin\Debug\net452\Agon.exe
 --define:DEBUG
 --define:TRACE
 --define:NET452
@@ -155,8 +155,8 @@
 --reference:C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.ServiceModel.dll
 --reference:C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Diagnostics.Tracing.dll
 --reference:C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Reflection.Primitives.dll
---resource:"C:\Projects\AGON\Agon\src\Agon\obj\Debug\net452\Agondotnet-compile.deps.json",Agon.deps.json
-C:\Projects\AGON\Agon\src\Agon\Program.cs
-C:\Projects\AGON\Agon\src\Agon\Startup.cs
-C:\Projects\AGON\Agon\src\Agon\Controllers\AccountController.cs
-C:\Projects\AGON\Agon\src\Agon\Models\AccountLoginVM.cs
+--resource:"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\obj\Debug\net452\Agondotnet-compile.deps.json",Agon.deps.json
+C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Program.cs
+C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Startup.cs
+C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Controllers\AccountController.cs
+C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Models\AccountLoginVM.cs

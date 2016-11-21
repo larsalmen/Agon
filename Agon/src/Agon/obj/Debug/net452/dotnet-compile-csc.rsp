@@ -8,8 +8,8 @@
 -debug:full
 -nostdlib
 -nologo
-"C:\Projects\AGON\Agon\src\Agon\obj\Debug\net452\dotnet-compile.assemblyinfo.cs"
--out:"C:\Projects\AGON\Agon\src\Agon\bin\Debug\net452\Agon.exe"
+"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\obj\Debug\net452\dotnet-compile.assemblyinfo.cs"
+-out:"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\bin\Debug\net452\Agon.exe"
 -r:"C:\Users\Administrator\.nuget\packages\Microsoft.AspNetCore.Antiforgery\1.0.1\lib\net451\Microsoft.AspNetCore.Antiforgery.dll"
 -r:"C:\Users\Administrator\.nuget\packages\Microsoft.AspNetCore.Authentication\1.0.0\lib\net451\Microsoft.AspNetCore.Authentication.dll"
 -r:"C:\Users\Administrator\.nuget\packages\Microsoft.AspNetCore.Authentication.Cookies\1.0.0\lib\net451\Microsoft.AspNetCore.Authentication.Cookies.dll"
@@ -151,8 +151,8 @@
 -r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.ServiceModel.dll"
 -r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Diagnostics.Tracing.dll"
 -r:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Reflection.Primitives.dll"
--resource:"C:\Projects\AGON\Agon\src\Agon\obj\Debug\net452\Agondotnet-compile.deps.json",Agon.deps.json
-"C:\Projects\AGON\Agon\src\Agon\Program.cs"
-"C:\Projects\AGON\Agon\src\Agon\Startup.cs"
-"C:\Projects\AGON\Agon\src\Agon\Controllers\AccountController.cs"
-"C:\Projects\AGON\Agon\src\Agon\Models\AccountLoginVM.cs"
+-resource:"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\obj\Debug\net452\Agondotnet-compile.deps.json",Agon.deps.json
+"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Program.cs"
+"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Startup.cs"
+"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Controllers\AccountController.cs"
+"C:\Users\Administrator\OneDrive\Students\_Förstudier\Anders Moldin\Projects\Agon\Agon\src\Agon\Models\AccountLoginVM.cs"
