@@ -69,7 +69,8 @@ namespace Agon
             {
                 ClientId = Configuration["SpotifyClientId"],
                 ClientSecret = Configuration["SpotifyClientSecret"],
-                SaveTokens = true
+                SaveTokens = true,
+                Scope = { "playlist-read-private" }
             });
 
             app.UseMvc(routes =>
