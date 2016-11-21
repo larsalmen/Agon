@@ -26,16 +26,21 @@ namespace Agon.Controllers
             this.signInManager = signInManager;
         }
 
-        public string Index()
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
-            return $"You are logged in as {User.Identity.Name}";
+            // Request a redirect to the external login provider.
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login()
+        public string Login()
         {
-            return View();
+            return "Inloggad!";
         }
 
         /*[AllowAnonymous]
@@ -67,5 +72,63 @@ namespace Agon.Controllers
             else
                 return Redirect(returnUrl);
         }*/
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
+                return View(nameof(Login));
+            }
+            var info = await signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            //Sign in the user with this external login provider if the user already has a login.
+            
+           // var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            if (info.ProviderKey == "barkaetarboris")
+            {
+                //_logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                return RedirectToAction(nameof(Login));
+            }
+            //if (result.RequiresTwoFactor)
+            //{
+            //    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
+            //}
+            //if (result.IsLockedOut)
+            //{
+            //    return View("Lockout");
+            //}
+            //else
+            //{
+            //    //If the user does not have an account, then ask the user to create an account.
+            //   ViewData["ReturnUrl"] = returnUrl;
+            //    ViewData["LoginProvider"] = info.LoginProvider;
+            //    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            //    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
+            //}
+            else
+            {
+                return RedirectToAction(nameof(Login));
+            }
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
     }
 }
