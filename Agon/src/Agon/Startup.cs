@@ -59,7 +59,11 @@ namespace Agon
 
             app.UseIdentity();
 
+
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+
+            var scopes = new SpotifyAuthenticationOptions().Scope;
+            
 
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
             {
@@ -68,11 +72,6 @@ namespace Agon
                 SaveTokens = true
             });
 
-
-            //SpotifyClientId
-
-            //SpotifyClientSecret
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -80,18 +79,6 @@ namespace Agon
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //////////////////////////////////////////
-            //loggerFactory.AddConsole();
-
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync(Configuration["MongoConnection"]);
-            //});
         }
     }
 }
