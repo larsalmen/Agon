@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "exports": {
+    "MongoUtils/1.0.0": {
+      "type": "project",
+      "framework": ".NETFramework,Version=v4.5.2",
+      "compile": {
+        "bin/Debug/MongoUtils.dll": {}
+      },
+      "runtime": {
+        "bin/Debug/MongoUtils.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/MongoUtils.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
+    }
+  }
+}

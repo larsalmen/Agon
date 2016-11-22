@@ -103,13 +103,12 @@ namespace Agon.Controllers
                 return RedirectToAction(nameof(Fail));
             }
 
-           
             //Sign in the user with this external login provider if the user already has a login.
             var signinresult = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (signinresult.Succeeded)
             {
-                var tokens = info.AuthenticationTokens;
-                return RedirectToLocal(returnUrl, info.ProviderKey);
+                
+                return RedirectToLocal(returnUrl);
             }
             else if (signinresult.IsNotAllowed || signinresult.IsLockedOut)
             {
@@ -129,25 +128,20 @@ namespace Agon.Controllers
                     if (result.Succeeded)
                     {
                         await signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToLocal(returnUrl, user.UserName);
+                        
+                        return RedirectToLocal(returnUrl);
                     }
                     else
                         return RedirectToAction(nameof(Fail));
                 }
                 else
                     return RedirectToAction(nameof(Fail));
-
             }
 
         }
 
-        private IActionResult RedirectToLocal(string returnUrl, string username)
+        private IActionResult RedirectToLocal(string returnUrl)
         {
-
-            var indexVM = new IndexVM("Home");
-            indexVM.Username = username;
-            indexVM.LoggedIn = true;
-
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
