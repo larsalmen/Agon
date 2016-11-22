@@ -22,7 +22,14 @@
   },
 
   "frameworks": {
-    "net452": {}
+    "net452": {
+      "dependencies": {
+        "MongoUtils": {
+          "target": "project"
+        }
+
+      }
+    }
   },
 
   "buildOptions": {
