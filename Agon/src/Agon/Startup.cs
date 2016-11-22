@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Agon.Models;
 using AspNet.Security.OAuth.Spotify;
+using MongoUtils;
 
 namespace Agon
 {
@@ -17,7 +18,13 @@ namespace Agon
     {
         public Startup(IHostingEnvironment env)
         {
-            MongoUtils.MongoManager.GetConnectionString;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath);
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
+
+            MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -25,8 +32,8 @@ namespace Agon
         public void ConfigureServices(IServiceCollection services)
         {
             // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(@"mongodb://test:academyht16@ds040309.mlab.com:40309/agony")
-                
+            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)
+
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
@@ -48,12 +55,14 @@ namespace Agon
 
             app.UseIdentity();
 
+            var spotifyClientId = Configuration["SpotifyClientId"];
+            var spotifyClientSecret = Configuration["SpotifyClientSecret"];
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
             {
-                ClientId = Configuration["SpotifyClientId"],
-                ClientSecret = Configuration["SpotifyClientSecret"],
+                ClientId = spotifyClientId,
+                ClientSecret = spotifyClientSecret,
                 SaveTokens = true,
                 Scope = { "playlist-read-private" }
             });

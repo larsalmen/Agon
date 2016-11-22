@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D0071AE4-760A-4711-849F-6A9C029F5023}</ProjectGuid>
+    <ProjectGuid>{8A6A23C1-5818-4A71-8DD4-D3C94706B7EB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MongoUtils</RootNamespace>

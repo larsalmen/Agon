@@ -28,7 +28,8 @@ namespace Agon.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var user = new IndexVM("Agon") { Username = "Roger Rönn", LoggedIn = true, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
+            var username = User.Identity.Name;
+            var user = new IndexVM("Agon") { Username = username, LoggedIn = User.Identity.IsAuthenticated, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
 
             return View(user);
         }
