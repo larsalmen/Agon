@@ -1841,6 +1841,9 @@
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         }
+      },
+      "MongoUtils/1.0.0": {
+        "type": "project"
       }
     }
   },
@@ -4838,6 +4841,10 @@
         "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll",
         "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.xml"
       ]
+    },
+    "MongoUtils/1.0.0": {
+      "type": "project",
+      "msbuildProject": "../../../MongoUtils/MongoUtils.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4855,7 +4862,9 @@
       "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0",
       "Microsoft.Extensions.Logging.Console >= 1.0.0"
     ],
-    ".NETFramework,Version=v4.5.2": []
+    ".NETFramework,Version=v4.5.2": [
+      "MongoUtils"
+    ]
   },
   "tools": {
     ".NETCoreApp,Version=v1.0": {
