@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Agon.Models;
 using AspNet.Security.OAuth.Spotify;
+using MongoUtils;
 
 namespace Agon
 {
@@ -18,19 +19,12 @@ namespace Agon
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                 .SetBasePath(env.ContentRootPath)
-                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                //builder.AddUserSecrets();
-            }
+                .SetBasePath(env.ContentRootPath);
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
+            MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -38,12 +32,11 @@ namespace Agon
         public void ConfigureServices(IServiceCollection services)
         {
             // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(Configuration["MongoConnection"])
-                
+            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)
+
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
-            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -62,12 +55,14 @@ namespace Agon
 
             app.UseIdentity();
 
+            var spotifyClientId = Configuration["SpotifyClientId"];
+            var spotifyClientSecret = Configuration["SpotifyClientSecret"];
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
             {
-                ClientId = Configuration["SpotifyClientId"],
-                ClientSecret = Configuration["SpotifyClientSecret"],
+                ClientId = spotifyClientId,
+                ClientSecret = spotifyClientSecret,
                 SaveTokens = true,
                 Scope = { "playlist-read-private" }
             });

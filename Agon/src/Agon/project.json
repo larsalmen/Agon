@@ -28,7 +28,6 @@
         "MongoUtils": {
           "target": "project"
         }
-
       }
     }
   },

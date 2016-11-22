@@ -4873,7 +4873,7 @@
     },
     "MongoUtils/1.0.0": {
       "type": "project",
-      "msbuildProject": "../../../MongoUtils/MongoUtils.csproj"
+      "msbuildProject": "../../MongoUtils/MongoUtils.csproj"
     }
   },
   "projectFileDependencyGroups": {
