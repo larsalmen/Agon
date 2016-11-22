@@ -37,7 +37,8 @@ namespace Agon
         public void ConfigureServices(IServiceCollection services)
         {
             // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(Configuration["MongoConnection"])
+            services.AddIdentityWithMongoStores(@"mongodb://test:academyht16@ds040309.mlab.com:40309/agony")
+                
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
