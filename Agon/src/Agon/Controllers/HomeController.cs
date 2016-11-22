@@ -15,29 +15,13 @@ namespace Agon.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        UserManager<IdentityUser> userManager;
-        SignInManager<IdentityUser> signInManager;
-        public HomeController(UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
-        {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-        }
-
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Index()
         {
-            var user = new IndexVM("Agon") { Username = "Roger Rönn", LoggedIn = true, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
+            var username = User.Identity.Name;
+            var user = new IndexVM("Agon") { Username = username, LoggedIn = User.Identity.IsAuthenticated, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
 
             return View(user);
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        }       
     }
 }

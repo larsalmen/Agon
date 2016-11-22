@@ -109,7 +109,7 @@ namespace Agon.Controllers
             if (signinresult.Succeeded)
             {
                 var tokens = info.AuthenticationTokens;
-                return RedirectToAction(nameof(Login));
+                return RedirectToLocal(returnUrl, info.ProviderKey);
             }
             else if (signinresult.IsNotAllowed || signinresult.IsLockedOut)
             {
@@ -117,6 +117,7 @@ namespace Agon.Controllers
             }
             else
             {
+                // If the user does not exist, create it.
                 var user = new IdentityUser { UserName = info.ProviderKey };
 
                 var result = await userManager.CreateAsync(user);
@@ -128,7 +129,7 @@ namespace Agon.Controllers
                     if (result.Succeeded)
                     {
                         await signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToLocal(returnUrl);
+                        return RedirectToLocal(returnUrl, user.UserName);
                     }
                     else
                         return RedirectToAction(nameof(Fail));
@@ -140,15 +141,20 @@ namespace Agon.Controllers
 
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
+        private IActionResult RedirectToLocal(string returnUrl, string username)
         {
+
+            var indexVM = new IndexVM("Home");
+            indexVM.Username = username;
+            indexVM.LoggedIn = true;
+
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Home");
             }
         }
     }
