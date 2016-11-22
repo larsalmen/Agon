@@ -96,37 +96,48 @@ namespace Agon.Controllers
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
                 return View(nameof(Fail));
             }
+
             var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 return RedirectToAction(nameof(Fail));
             }
 
+           
             //Sign in the user with this external login provider if the user already has a login.
-            
-           // var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-            if (info.ProviderKey == "agontest")
+            var signinresult = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            if (signinresult.Succeeded)
             {
-                //_logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                var tokens = info.AuthenticationTokens;
                 return RedirectToAction(nameof(Login));
             }
-            //if (result.IsLockedOut)
-            //{
-            //    return View("Lockout");
-            //}
-            //else
-            //{
-            //    //If the user does not have an account, then ask the user to create an account.
-            //   ViewData["ReturnUrl"] = returnUrl;
-            //    ViewData["LoginProvider"] = info.LoginProvider;
-            //    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            //    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
-            //}
-            else
+            else if (signinresult.IsNotAllowed || signinresult.IsLockedOut)
             {
-                
                 return RedirectToAction(nameof(Fail));
             }
+            else
+            {
+                var user = new IdentityUser { UserName = info.ProviderKey };
+
+                var result = await userManager.CreateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    result = await userManager.AddLoginAsync(user, info);
+
+                    if (result.Succeeded)
+                    {
+                        await signInManager.SignInAsync(user, isPersistent: false);
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else
+                        return RedirectToAction(nameof(Fail));
+                }
+                else
+                    return RedirectToAction(nameof(Fail));
+
+            }
+
         }
 
         private IActionResult RedirectToLocal(string returnUrl)
