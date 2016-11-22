@@ -40,7 +40,14 @@ namespace Agon.Controllers
         [HttpGet]
         public string Login()
         {
-            return "Inloggad!";
+            return "Inloggad";
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public string Fail()
+        {
+            return "Fail";
         }
 
         /*[AllowAnonymous]
@@ -81,12 +88,12 @@ namespace Agon.Controllers
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return View(nameof(Login));
+                return View(nameof(Fail));
             }
             var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction(nameof(Fail));
             }
 
             //Sign in the user with this external login provider if the user already has a login.
@@ -115,7 +122,8 @@ namespace Agon.Controllers
             //}
             else
             {
-                return RedirectToAction(nameof(Login));
+                
+                return RedirectToAction(nameof(Fail));
             }
         }
 
