@@ -61,10 +61,6 @@ namespace Agon
 
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-
-            var scopes = new SpotifyAuthenticationOptions().Scope;
-            
-
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
             {
                 ClientId = Configuration["SpotifyClientId"],

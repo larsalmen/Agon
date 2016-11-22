@@ -92,7 +92,7 @@ namespace Agon.Controllers
             //Sign in the user with this external login provider if the user already has a login.
             
            // var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
-            if (info.ProviderKey == "barkaetarboris")
+            if (info.ProviderKey == "agontest")
             {
                 //_logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToAction(nameof(Login));

@@ -10,6 +10,6 @@ namespace Agon.Models
         public string Name { get; set; }
         public string Owner { get; set; }
 
-        public List<Song> songs { get; set; }
+        public List<Song> Songs { get; set; }
     }
 }
