@@ -110,10 +110,6 @@ namespace Agon.Controllers
                 //_logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToAction(nameof(Login));
             }
-            //if (result.RequiresTwoFactor)
-            //{
-            //    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
-            //}
             //if (result.IsLockedOut)
             //{
             //    return View("Lockout");
