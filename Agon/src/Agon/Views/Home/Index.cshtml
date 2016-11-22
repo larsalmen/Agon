@@ -6,12 +6,12 @@
 
         <button type="submit" name="provider" value="Spotify">BOOM!</button>
     </form>
-    <ol>
+    <div class="list-group">
         @foreach (var quiz in Model.Quizzes)
         {
-            <li><a href="Quiz/@quiz.Name">@quiz.Name</a></li>
+            <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
         }
-    </ol>
+    </div>
 }
 else
 {
