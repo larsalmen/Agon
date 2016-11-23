@@ -110,7 +110,7 @@ namespace Agon.Controllers
             var signinresult = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (signinresult.Succeeded)
             {
-                SetTokensInSession(info);
+                AgonManager.SetTokensInSession(info, HttpContext.Session);
 
 
                 return RedirectToLocal(returnUrl);
@@ -133,7 +133,7 @@ namespace Agon.Controllers
                     if (result.Succeeded)
                     {
                         await signInManager.SignInAsync(user, isPersistent: false);
-                        SetTokensInSession(info);
+                        AgonManager.SetTokensInSession(info, HttpContext.Session);
 
                         return RedirectToLocal(returnUrl);
                     }
@@ -145,21 +145,7 @@ namespace Agon.Controllers
             }
 
         }
-        private void SetTokensInSession(ExternalLoginInfo info)
-        {
-            string access_token = "";
-            string refresh_token = "";
-            string recieved_at = "";
-
-            access_token = info.AuthenticationTokens.Where(x => x.Name == "access_token").Select(y => y.Value).FirstOrDefault();
-            HttpContext.Session.SetString("access_token", access_token);
-
-            refresh_token = info.AuthenticationTokens.Where(x => x.Name == "refresh_token").Select(y => y.Value).FirstOrDefault();
-            HttpContext.Session.SetString("refresh_token", refresh_token);
-
-            recieved_at = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
-            HttpContext.Session.SetString("expires_at", recieved_at);
-        }
+       
 
         private IActionResult RedirectToLocal(string returnUrl)
         {

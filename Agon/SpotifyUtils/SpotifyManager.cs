@@ -15,20 +15,21 @@ namespace SpotifyUtils
         public static string SpotifyClientId { get; set; }
         public static string SpotifyClientSecret { get; set; }
 
+ 
         public static void SetVariables(string spotifyClientId, string spotifyClientSecret)
         {
             SpotifyClientId = spotifyClientId;
             SpotifyClientSecret = spotifyClientSecret;
         }
 
-        public static async Task<ListOfPlaylists> GetAllUserPlaylists(string access_token, string refresh_token, string recieved_at, string userName)
+        public static async Task<ListOfPlaylists> GetAllUserPlaylists(SpotifyTokens token)
         {
-            string endpoint = @"https://api.spotify.com/v1/users/" + userName + "/playlists";
+            string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists";
 
             WebHeaderCollection headerCollection = new WebHeaderCollection();
 
             headerCollection.Add("Accept-Encoding:gzip,deflate,compress");
-            headerCollection.Add("Authorization:Bearer " + access_token);
+            headerCollection.Add("Authorization:Bearer " + token.AccessToken);
 
             var request = WebRequest.CreateHttp(endpoint);
             request.Host = "api.spotify.com";
