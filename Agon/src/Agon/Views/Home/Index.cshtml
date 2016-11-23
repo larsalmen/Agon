@@ -10,14 +10,15 @@
         }
     </div>
 
-    <form asp-controller="Home" asp-action="GetPlayLists" method="post">
 
-        <button type="submit">BANG!</button>
+    <form asp-controller="Home" asp-action="GetPlayLists" method="post">
+        <button type="submit">Get playlists!</button>
     </form>
 }
 else
 {
-    <p>Den här sidan kan visas när man inte är inloggad.</p>
-    <p>Här är länk till inloggningen!!! Logga in!</p>
-
+    <button class="btn btn-success btn-lg">Log in with Spotify</button><br />
+    <label>Log in with Spotify to create your quiz</label><br /><br />
+    <button class="btn btn-primary btn-lg">Enter PIN</button><br />
+    <label>You have a PIN and want to join a quiz</label>
 }
