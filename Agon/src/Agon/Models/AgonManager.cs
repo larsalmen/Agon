@@ -21,6 +21,8 @@ namespace Agon.Models
                 controller.User.Identity.Name
                 );
         }
+
+
         public static void SetTokensInSession(ExternalLoginInfo info, ISession session)
         {
             var access_token = info.AuthenticationTokens.Where(x => x.Name == "access_token").Select(y => y.Value).FirstOrDefault();
@@ -32,11 +34,30 @@ namespace Agon.Models
             var recieved_at = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
             session.SetString("recieved_at", recieved_at);
         }
-        public static async Task GetPlaylists(SpotifyTokens token)
+        public static async Task<List<PlaylistVM>> GetPlaylists(SpotifyTokens token)
         {
             var allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
 
-            //SpotifyUtils.
+            var playlists = new List<PlaylistVM>();
+
+            foreach (var item in allReturnedPlaylists.Items)
+            {
+                playlists.Add(new PlaylistVM(item.Name, item.Tracks.Href));
+            }
+
+            return playlists;
+        }
+        public static async Task<Quiz> GenerateQuiz(SpotifyTokens token, PlaylistVM viewModel)
+        {
+            var allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
+
+            
+
+            //var songs = new List<Songs>();
+
+            //var quiz = new Quiz() { Name = viewModel.Name + " Quiz", Songs = songs };
+
+            return new Quiz();
         }
     }
 }

@@ -27,13 +27,13 @@ namespace Agon.Controllers
             return View(user);
         }
 
-        public IActionResult ViewPlaylists()
+        public async Task<IActionResult> ViewPlaylists()
         {
             var token = AgonManager.GetSpotifyTokens(this);
 
-            var viewmodel = AgonManager.GetPlaylists(token);
+            var viewmodel = await AgonManager.GetPlaylists(token);
 
-            return View();
+            return View(viewmodel);
         }
     }
 }

@@ -8,10 +8,11 @@
         {
             <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
         }
+        <a href="Quiz/Hej" class="list-group-item">Lägg till quiz</a>
     </div>
 
 
-    <form asp-controller="Home" asp-action="GetPlayLists" method="post">
+    <form asp-controller="Home" asp-action="ViewPlaylists" method="post">
         <button type="submit">Get playlists!</button>
     </form>
 }

@@ -9,22 +9,22 @@ namespace SpotifyUtils
 {
     public class ListOfPlaylists
     {
-        public List<Item> Items { get; set; }
+        public List<PlaylistItem> Items { get; set; }
 
         [JsonConstructor]
-        public ListOfPlaylists(List<Item> items)
+        public ListOfPlaylists(List<PlaylistItem> items)
         {
             Items = items;
         }
     }
 
-    public class Item
+    public class PlaylistItem
     {
         public string Name { get; set; }
         public Tracks Tracks { get; set; }
 
         [JsonConstructor]
-        public Item(string name, Tracks tracks)
+        public PlaylistItem(string name, Tracks tracks)
         {
             Name = name;
             Tracks = tracks;
@@ -38,7 +38,10 @@ namespace SpotifyUtils
         [JsonConstructor]
         public Tracks(string href)
         {
-            Href = href;
+            var temp = href.Substring(0, href.LastIndexOf("/"));
+            temp = temp.Substring(temp.LastIndexOf("/") + 1);
+
+            Href = temp;
         }
     }
 }
