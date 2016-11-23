@@ -21,8 +21,8 @@ namespace Agon.Controllers
             var token = AgonManager.GetSpotifyTokens(this);
 
             var hej = await AgonManager.GenerateQuiz(token, viewModel);
-
-            return $"{viewModel.Name}: {viewModel.SpotifyRef}";
+            var jsonhej = JsonConvert.SerializeObject(hej, Formatting.Indented);
+            return $"{viewModel.Name}: {viewModel.SpotifyRef} {jsonhej}";
         }
     }
 }

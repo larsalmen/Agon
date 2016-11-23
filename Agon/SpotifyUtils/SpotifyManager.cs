@@ -51,7 +51,7 @@ namespace SpotifyUtils
 
         public static async Task<ListOfSongs> GetAllSongsFromPlaylist(SpotifyTokens token, string spotifyRef)
         {
-            string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(name,href,album(name,href)))";
+            string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(artists,name,href,album(name,href)))";
 
             WebHeaderCollection headerCollection = new WebHeaderCollection();
 
@@ -75,10 +75,11 @@ namespace SpotifyUtils
             var listOfSongs = JsonConvert.DeserializeObject<ListOfSongs>(text);
 
             var albumInfo = await GetAlbumInfo(token, listOfSongs);
+            listOfSongs.AlbumInfo = albumInfo;
             return listOfSongs;
         }
 
-        private static async Task<AlbumInfo> GetAlbumInfo(SpotifyTokens token, ListOfSongs listOfSongs)
+        private static async Task<ListOfAlbumInfo> GetAlbumInfo(SpotifyTokens token, ListOfSongs listOfSongs)
         {
             StringBuilder endpoint = new StringBuilder();
             endpoint.Append(@"https://api.spotify.com/v1/albums?ids=");
@@ -108,7 +109,7 @@ namespace SpotifyUtils
                 text = stream.ReadToEnd();
             }
 
-            var albumInfo = JsonConvert.DeserializeObject<AlbumInfo>(text);
+            var albumInfo = JsonConvert.DeserializeObject<ListOfAlbumInfo>(text);
             return albumInfo;
         }
     }

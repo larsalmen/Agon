@@ -5,6 +5,7 @@ using SpotifyUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Agon.Models
@@ -50,14 +51,40 @@ namespace Agon.Models
         public static async Task<Quiz> GenerateQuiz(SpotifyTokens token, PlaylistVM viewModel)
         {
             var allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
-
             
+            var quiz = new Quiz();
 
-            //var songs = new List<Songs>();
+            quiz.Name = viewModel.Name;
+            quiz.Owner = token.Username;
 
-            //var quiz = new Quiz() { Name = viewModel.Name + " Quiz", Songs = songs };
+            int counter = 0;
+         
+            foreach (var item in allReturnedSongs.Items)
+            {
+                
+                StringBuilder builder = new StringBuilder();
 
-            return new Quiz();
+                foreach (var artist in item.Track.Artists)
+                {
+                    builder.Append(artist.Name);
+                    if (artist != item.Track.Artists[item.Track.Artists.Count - 1])
+                        builder.Append(", ");
+                }
+                
+                quiz.Songs.Add(new Song {
+                    Title = item.Track.Name,
+                    Artist = builder.ToString(),
+                    AlbumTitle = item.Track.Album.Name,
+                    RealeaseDate = allReturnedSongs.AlbumInfo.AlbumInfo[counter].ReleaseDate,
+                SpotifyReferenceID = item.Track.Href});
+
+                counter++;
+            }
+
+            // Just for shits and giggles, save dis bad boy to the database.
+
+
+            return quiz;
         }
     }
 }

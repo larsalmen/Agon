@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlbumInfo.cs" />
+    <Compile Include="ListOfAlbumInfo.cs" />
     <Compile Include="ListOfPlaylists.cs" />
     <Compile Include="ListOfSongs.cs" />
     <Compile Include="SpotifyManager.cs" />

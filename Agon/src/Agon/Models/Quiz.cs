@@ -11,5 +11,9 @@ namespace Agon.Models
         public string Owner { get; set; }
 
         public List<Song> Songs { get; set; }
+        public Quiz()
+        {
+            Songs = new List<Song>();
+        }
     }
 }
