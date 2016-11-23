@@ -21,23 +21,19 @@ namespace Agon.Controllers
         public IActionResult Index()
         {
             var username = User.Identity.Name;
-            
+
             var user = new IndexVM("Agon") { Username = username, LoggedIn = User.Identity.IsAuthenticated, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
 
             return View(user);
         }
-        
-        public async Task GetPlayLists()
+
+        public IActionResult ViewPlaylists()
         {
-            //Flytta tokens till SpotifyManager med en CheckToken-metod
+            var token = AgonManager.GetSpotifyTokens(this);
 
-            var access_token = HttpContext.Session.GetString("access_token");
-            var refresh_token = HttpContext.Session.GetString("refresh_token");
-            var recieved_at = HttpContext.Session.GetString("expires_at");
-            var userName = User.Identity.Name;
+            var viewmodel = AgonManager.GetPlaylists(token);
 
-            var allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(access_token, refresh_token, recieved_at, userName);
-            
-        }      
+            return View();
+        }
     }
 }
