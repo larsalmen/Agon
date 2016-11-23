@@ -5,6 +5,7 @@
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  padding: 20px;
 }
 .footer {
   position: absolute;
@@ -14,3 +15,22 @@ body {
   height: 60px;
   background-color: #f5f5f5;
 }
+
+    #search-form, .form-control {
+        margin-bottom: 20px;
+    }
+
+    .cover {
+        width: 300px;
+        height: 300px;
+        display: inline-block;
+        background-size: cover;
+    }
+
+        .cover:hover {
+            cursor: pointer;
+        }
+
+        .cover.playing {
+            border: 5px solid #e45343;
+        }

@@ -24,5 +24,10 @@ namespace Agon.Controllers
             var jsonhej = JsonConvert.SerializeObject(hej, Formatting.Indented);
             return $"{viewModel.Name}: {viewModel.SpotifyRef} {jsonhej}";
         }
+
+        public IActionResult AddSong()
+        {
+            return View();
+        }
     }
 }
