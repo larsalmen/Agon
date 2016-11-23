@@ -8,6 +8,10 @@
         "bin/Debug/MongoUtils.dll": {}
       },
       "runtime": {
+        "../packages/MongoDB.Bson.2.3.0/lib/net45/MongoDB.Bson.dll": {},
+        "../packages/MongoDB.Driver.2.3.0/lib/net45/MongoDB.Driver.dll": {},
+        "../packages/MongoDB.Driver.Core.2.3.0/lib/net45/MongoDB.Driver.Core.dll": {},
+        "../packages/Newtonsoft.Json.9.0.1/lib/net45/Newtonsoft.Json.dll": {},
         "bin/Debug/MongoUtils.dll": {}
       },
       "contentFiles": {

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MongoUtils;
+using Newtonsoft.Json;
 using SpotifyUtils;
 using System;
 using System.Collections.Generic;
@@ -80,9 +82,12 @@ namespace Agon.Models
 
                 counter++;
             }
+            
 
             // Just for shits and giggles, save dis bad boy to the database.
-
+            var quizJson = JsonConvert.SerializeObject(quiz);
+            
+            MongoManager.SaveQuiz(quizJson);
 
             return quiz;
         }
