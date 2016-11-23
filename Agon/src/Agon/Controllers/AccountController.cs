@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Agon.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.MongoDB;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -91,6 +92,8 @@ namespace Agon.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
+
+
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
@@ -107,7 +110,9 @@ namespace Agon.Controllers
             var signinresult = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (signinresult.Succeeded)
             {
-                
+                SetTokensInSession(info);
+
+
                 return RedirectToLocal(returnUrl);
             }
             else if (signinresult.IsNotAllowed || signinresult.IsLockedOut)
@@ -128,7 +133,8 @@ namespace Agon.Controllers
                     if (result.Succeeded)
                     {
                         await signInManager.SignInAsync(user, isPersistent: false);
-                        
+                        SetTokensInSession(info);
+
                         return RedirectToLocal(returnUrl);
                     }
                     else
@@ -138,6 +144,21 @@ namespace Agon.Controllers
                     return RedirectToAction(nameof(Fail));
             }
 
+        }
+        private void SetTokensInSession(ExternalLoginInfo info)
+        {
+            string access_token = "";
+            string refresh_token = "";
+            string recieved_at = "";
+
+            access_token = info.AuthenticationTokens.Where(x => x.Name == "access_token").Select(y => y.Value).FirstOrDefault();
+            HttpContext.Session.SetString("access_token", access_token);
+
+            refresh_token = info.AuthenticationTokens.Where(x => x.Name == "refresh_token").Select(y => y.Value).FirstOrDefault();
+            HttpContext.Session.SetString("refresh_token", refresh_token);
+
+            recieved_at = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
+            HttpContext.Session.SetString("expires_at", recieved_at);
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

@@ -27,6 +27,9 @@
       "dependencies": {
         "MongoUtils": {
           "target": "project"
+        },
+        "SpotifyUtils": {
+          "target": "project"
         }
       }
     }

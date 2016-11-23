@@ -9,6 +9,11 @@
             <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
         }
     </div>
+
+    <form asp-controller="Home" asp-action="GetPlayLists" method="post">
+
+        <button type="submit">BANG!</button>
+    </form>
 }
 else
 {

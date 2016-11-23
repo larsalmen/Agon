@@ -17,6 +17,24 @@
           "copyToOutput": true
         }
       }
+    },
+    "SpotifyUtils/1.0.0": {
+      "type": "project",
+      "framework": ".NETFramework,Version=v4.5.2",
+      "compile": {
+        "bin/Debug/SpotifyUtils.dll": {}
+      },
+      "runtime": {
+        "../packages/Newtonsoft.Json.9.0.2-beta1/lib/net45/Newtonsoft.Json.dll": {},
+        "bin/Debug/SpotifyUtils.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/SpotifyUtils.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        }
+      }
     }
   }
 }

@@ -1860,6 +1860,9 @@
       },
       "MongoUtils/1.0.0": {
         "type": "project"
+      },
+      "SpotifyUtils/1.0.0": {
+        "type": "project"
       }
     }
   },
@@ -4874,6 +4877,10 @@
     "MongoUtils/1.0.0": {
       "type": "project",
       "msbuildProject": "../../MongoUtils/MongoUtils.csproj"
+    },
+    "SpotifyUtils/1.0.0": {
+      "type": "project",
+      "msbuildProject": "../../SpotifyUtils/SpotifyUtils.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4893,7 +4900,8 @@
       "Microsoft.Extensions.Logging.Console >= 1.0.0"
     ],
     ".NETFramework,Version=v4.5.2": [
-      "MongoUtils"
+      "MongoUtils",
+      "SpotifyUtils"
     ]
   },
   "tools": {
