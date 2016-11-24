@@ -85,9 +85,9 @@ namespace Agon.Models
             
 
             // Just for shits and giggles, save dis bad boy to the database.
-            var quizJson = JsonConvert.SerializeObject(quiz);
+            //var quizJson = JsonConvert.SerializeObject(quiz);
             
-            MongoManager.SaveQuiz(quizJson);
+            //MongoManager.SaveQuiz(quizJson);
 
             return quiz;
         }

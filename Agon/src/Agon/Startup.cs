@@ -27,7 +27,7 @@ namespace Agon
 
             MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
             SpotifyManager.SetVariables(Configuration["SpotifyClientId"], Configuration["SpotifyClientSecret"]);
-        }
+         }
 
         public IConfigurationRoot Configuration { get; }
 

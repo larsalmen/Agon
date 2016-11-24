@@ -16,13 +16,13 @@ namespace Agon.Controllers
     {
         // GET: /<controller>/
         [HttpPost]
-        public async Task<string> Create(PlaylistVM viewModel)
+        public async Task<IActionResult> Create(PlaylistVM viewModel)
         {
             var token = AgonManager.GetSpotifyTokens(this);
 
-            var hej = await AgonManager.GenerateQuiz(token, viewModel);
-            var jsonhej = JsonConvert.SerializeObject(hej, Formatting.Indented);
-            return $"{viewModel.Name}: {viewModel.SpotifyRef} {jsonhej}";
+            var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
+            var jsonhej = JsonConvert.SerializeObject(newQuiz, Formatting.Indented);
+            return View(newQuiz);
         }
 
         public IActionResult AddSong()

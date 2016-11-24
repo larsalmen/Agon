@@ -1,1 +1,10 @@
-﻿
+﻿@model Quiz
+
+<h1>Create your quiz!</h1>
+
+@foreach (var song in Model.Songs)
+{
+    <form asp-controller="Quiz" asp-action="EditSong">
+        <input type="submit" value="@song.Artist - @song.Title" />
+    </form>
+}
