@@ -1,0 +1,18 @@
+﻿@model EditSongVM
+
+<h1>@Model.Artist - @Model.Title</h1>
+<div class="container-full">
+    <div class="list-group">
+        <form asp-controller="Quiz" asp-action="UpdateQuestions">
+
+            @foreach (var item in Model.Questions)
+            {
+                <input type="text" name="item.Text" value="@item.Text" /><input type="text" name="item.CorrectAnswer" value="@item.CorrectAnswer" /><br />
+
+            }
+            <input type="hidden" value="@Model.SpotifyReferenceID" name="id" />
+            <input type="submit" value="Save" />
+        </form>
+    </div>
+</div>
+<input type="checkbox" value="true">
