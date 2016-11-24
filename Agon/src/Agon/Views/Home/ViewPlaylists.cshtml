@@ -8,5 +8,33 @@
             <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
             <input type="submit" value="@playlist.Name" />
         </form>
+    }@foreach (var playlist in Model)
+    {
+        <form asp-controller="Quiz" asp-action="Create">
+            <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
+            <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
+            <input type="submit" value="@playlist.Name" />
+        </form>
+    }@foreach (var playlist in Model)
+    {
+        <form asp-controller="Quiz" asp-action="Create">
+            <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
+            <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
+            <input type="submit" value="@playlist.Name" />
+        </form>
+    }@foreach (var playlist in Model)
+    {
+        <form asp-controller="Quiz" asp-action="Create">
+            <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
+            <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
+            <input type="submit" value="@playlist.Name" />
+        </form>
+    }@foreach (var playlist in Model)
+    {
+        <form asp-controller="Quiz" asp-action="Create">
+            <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
+            <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
+            <input type="submit" value="@playlist.Name" />
+        </form>
     }
 </div>
