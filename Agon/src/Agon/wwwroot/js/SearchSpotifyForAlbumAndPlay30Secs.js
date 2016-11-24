@@ -34,7 +34,6 @@ var searchTracks = function (query) {
             type: 'track'
         },
         success: function (response) {
-            console.log(response);
             resultsPlaceholder.innerHTML = template(response);
         }
     });

@@ -9,11 +9,12 @@
 <script id="results-template" type="text/x-handlebars-template">
     <table>
         <tr>
-            <th></th>
-            <th>Spår</th>
-            <th>Artist</th>
-            <th>Album</th>
-            <th>Preview</th>
+            <th class="text-center"></th>
+            <th class="text-center">Spår</th>
+            <th class="text-center">Artist</th>
+            <th class="text-center">Album</th>
+            <th class="text-center">Preview</th>
+            <th class="text-center">Lägg till i quiz</th>
         </tr>
         {{#each tracks.items}}
         <tr>
@@ -21,18 +22,27 @@
             <td>{{name}}</td>
             <td>{{artists.0.name}}</td>
             <td>{{album.name}}</td>
-            <td><a href="#" preview-url="{{preview_url}}" class="cover">Play!</a></td>
+            <td>
+                <button type="button" class="btn btn-primary">
+                    <span preview-url="{{preview_url}}" class="glyphicon glyphicon-play cover"></span> Play
+                </button>
+            </td>
+            @*<td><a href="#" preview-url="{{preview_url}}" class="cover">Play!</a></td>*@
+            <td>
+                <form asp-controller="Quiz" asp-action="AddSong">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span> Add to playlist
+                    </button>
+                </form>
+            </td>
         </tr>
 
         @*<div style="border:1px solid black;"><img src="{{album.images.2.url}}" /> {{name}} - {{artists.0.name}}</div>*@
         <!--<div style="background-image:url({{album.images.0.url}})" data-album-id="{{id}}" class="cover"></div>-->
         {{/each}}
-</table>
+    </table>
 </script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="~/js/SearchSpotifyForAlbumAndPlay30Secs.js"></script>
 
 <!-- Här kan vi styra upp lägg-till-i-quiz-logiken -->
-<form asp-controller="Quiz" asp-action="AddSong">
-
-</form>
