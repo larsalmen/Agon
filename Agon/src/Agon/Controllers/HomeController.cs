@@ -17,14 +17,24 @@ namespace Agon.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> UserLoggedIn()
         {
             var username = User.Identity.Name;
 
-            var user = new IndexVM("Agon") { Username = username, LoggedIn = User.Identity.IsAuthenticated, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } };
+            var userVM = await AgonManager.GetUserVMAsync("User", username, User.Identity.IsAuthenticated);
 
-            return View(user);
+            return View(userVM);
+        }
+
+        [AllowAnonymous]
+        public IActionResult Index()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(UserLoggedIn));
+            }
+
+            return View();
         }
 
         public async Task<IActionResult> ViewPlaylists()
@@ -35,5 +45,6 @@ namespace Agon.Controllers
 
             return View(viewmodel);
         }
+
     }
 }

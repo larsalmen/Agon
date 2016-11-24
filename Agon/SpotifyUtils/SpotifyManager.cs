@@ -46,6 +46,7 @@ namespace SpotifyUtils
             }
 
             var listOfPlaylists = JsonConvert.DeserializeObject<ListOfPlaylists>(text);
+            listOfPlaylists.Items = listOfPlaylists.Items.Where(i => i.Tracks.Total < 20).ToList();
             return listOfPlaylists;
         }
 

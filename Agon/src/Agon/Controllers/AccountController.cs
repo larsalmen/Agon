@@ -36,19 +36,19 @@ namespace Agon.Controllers
             var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login(string str = null)
-        {
-            return View(new IndexVM("Login") { Username = "KalleKula", LoggedIn = true, Quizzes = new List<Quiz> { new Quiz { Name = "Mitt Quiz 1" }, new Quiz { Name = "Aqua-quiz" } } });
-        }
+        //[AllowAnonymous]
+        //[HttpGet]
+        //public IActionResult Login(string str = null)
+        //{
+        //    return View();
+        //}
 
-        [AllowAnonymous]
-        [HttpPost]
-        public string Login()
-        {
-            return "Inloggad";
-        }
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public string Login()
+        //{
+        //    return "Inloggad";
+        //}
 
         [AllowAnonymous]
         [HttpPost]

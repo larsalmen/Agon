@@ -87,5 +87,14 @@ namespace Agon.Models
 
             return quiz;
         }
+
+        public static async Task<UserVM> GetUserVMAsync(string title, string username, bool loggedIn)
+        {
+            List<Quiz> quizzes = new List<Quiz>();
+            quizzes = JsonConvert.DeserializeObject<List<Quiz>>(await MongoManager.GetAllQuizzesAsync(username));
+            var userVM = new UserVM(title, username, quizzes, loggedIn);
+
+            return userVM;
+        }
     }
 }

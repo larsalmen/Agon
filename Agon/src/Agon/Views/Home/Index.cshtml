@@ -1,25 +1,7 @@
-﻿@model IndexVM
-@if (Model.LoggedIn)
-{
-    <p>Du är inloggad som tusan med @Model.Username!</p>
+﻿<form class="btn btn-success btn-lg" asp-controller="Account" asp-action="ExternalLogin" method="post">
 
-    <div class="list-group">
-        @foreach (var quiz in Model.Quizzes)
-        {
-            <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
-        }
-        <a href="Quiz/Hej" class="list-group-item">Lägg till quiz</a>
-    </div>
-
-
-    <form asp-controller="Home" asp-action="ViewPlaylists" method="post">
-        <button type="submit">Get playlists!</button>
-    </form>
-}
-else
-{
-    <button class="btn btn-success btn-lg">Log in with Spotify</button><br />
-    <label>Log in with Spotify to create your quiz</label><br /><br />
-    <button class="btn btn-primary btn-lg">Enter PIN</button><br />
-    <label>You have a PIN and want to join a quiz</label>
-}
+    <button type="submit" name="provider" value="Spotify">BOOM!</button>
+</form>
+<label>Log in with Spotify to create your quiz</label><br /><br />
+<button class="btn btn-primary btn-lg">Enter PIN</button><br />
+<label>You have a PIN and want to join a quiz</label>

@@ -34,14 +34,17 @@ namespace SpotifyUtils
     public class Tracks
     {
         public string Href { get; set; }
+        public Int32 Total { get; set; }
 
         [JsonConstructor]
-        public Tracks(string href)
+        public Tracks(string href, string total)
         {
             var temp = href.Substring(0, href.LastIndexOf("/"));
             temp = temp.Substring(temp.LastIndexOf("/") + 1);
 
             Href = temp;
+
+            Total = Int32.Parse(total);
         }
     }
 }
