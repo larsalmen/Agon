@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 
 namespace Agon.Models
 {
@@ -37,6 +38,22 @@ namespace Agon.Models
             var recieved_at = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
             session.SetString("recieved_at", recieved_at);
         }
+
+        internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz,string id)
+        {
+            var updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+
+            var song = updatedQuiz.Songs.Where(s => s.SpotifyReferenceID == id).FirstOrDefault();
+
+            for (int i = 0; i < questionText.Count; i++)
+            {
+                song.Questions.Add(new Question { Text = questionText[i], CorrectAnswer = answerText[i] });
+            }
+
+
+            return updatedQuiz;
+        }
+
         public static async Task<List<PlaylistVM>> GetPlaylists(SpotifyTokens token)
         {
             var allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
@@ -85,16 +102,25 @@ namespace Agon.Models
                 counter++;
             }
 
+
+            // Just for shits and giggles, save dis bad boy to the database.
+            //var quizJson = JsonConvert.SerializeObject(quiz);
+
+            //MongoManager.SaveQuiz(quizJson);
+
             return quiz;
         }
-
-        public static async Task<UserVM> GetUserVMAsync(string title, string username, bool loggedIn)
+        public static EditSongVM CreateEditSongVM(string song)
         {
-            List<Quiz> quizzes = new List<Quiz>();
-            quizzes = JsonConvert.DeserializeObject<List<Quiz>>(await MongoManager.GetAllQuizzesAsync(username));
-            var userVM = new UserVM(title, username, quizzes, loggedIn);
+            var newSong = JsonConvert.DeserializeObject<Song>(song);
+            var editSongVM = new EditSongVM(newSong.Artist,newSong.Title,newSong.SpotifyReferenceID);
 
-            return userVM;
+            editSongVM.Questions.Add(new Question { Text = "What is the name of the song?", CorrectAnswer = newSong.Title });
+            editSongVM.Questions.Add(new Question { Text = "What is the name of the artist?", CorrectAnswer = newSong.Artist });
+            editSongVM.Questions.Add(new Question { Text = "What is the name of the album?", CorrectAnswer = newSong.AlbumTitle });
+            editSongVM.Questions.Add(new Question { Text = "When was this song released?", CorrectAnswer = newSong.RealeaseDate });
+
+            return editSongVM;
         }
     }
 }
