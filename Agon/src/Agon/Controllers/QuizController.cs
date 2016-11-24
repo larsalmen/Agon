@@ -42,7 +42,7 @@ namespace Agon.Controllers
         }
         [HttpPost]
 
-        public IActionResult UpdateQuestions(string id)
+        public async Task<IActionResult> UpdateQuestions(string id)
         {
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
@@ -50,7 +50,7 @@ namespace Agon.Controllers
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz,id);
 
-            MongoManager.SaveQuiz(JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.SaveQuizAsync(JsonConvert.SerializeObject(updatedQuiz));
 
             return RedirectToAction("ViewPlaylists", "Home");
         }
