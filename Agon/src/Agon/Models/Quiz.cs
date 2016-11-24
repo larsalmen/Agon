@@ -1,4 +1,7 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,8 +9,11 @@ using Newtonsoft.Json;
 
 namespace Agon.Models
 {
+
     public class Quiz
     {
+        [BsonId]
+        public string _id { get; set; }
         public string Name { get; set; }
         public string Owner { get; set; }
 
@@ -15,6 +21,7 @@ namespace Agon.Models
         public Quiz()
         {
             Songs = new List<Song>();
+            _id = Guid.NewGuid().ToString();
         }
 
     }

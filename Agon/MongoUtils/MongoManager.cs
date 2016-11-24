@@ -11,27 +11,76 @@ namespace MongoUtils
 {
     public static class MongoManager
     {
+        // add constants instead of strings in methods.
+        const string databaseName = "agony";
+        const string collection = "Quizzes";
+
         static public string MongoConnection { get; set; }
+        static MongoClient mongoClient;
 
         public static void SetupEnvironmentVariables(string mongoConnection)
         {
             MongoConnection = mongoConnection;
+            mongoClient = new MongoClient(MongoConnection);
         }
 
 
-
-
-        public static void SaveQuiz(string quizJson)
+        public async static Task SaveQuizAsync(string quizJson)
         {
-            MongoClient mongoClient = new MongoClient(MongoConnection);
+            var agony = mongoClient.GetDatabase(databaseName);
 
-            IMongoDatabase agony = mongoClient.GetDatabase("agony");
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
 
-            var quizzes = agony.GetCollection<Quiz>("Quizzes");
+            var document = BsonDocument.Parse(quizJson);
+            try
+            {
+                await quizzes.InsertOneAsync(document);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-            var document = JsonConvert.DeserializeObject<Quiz>(quizJson);
+        public async static Task<string> GetOneQuizAsync(string owner, string quizName)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
 
-            quizzes.InsertOne(document);
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
+
+            BsonDocument quiz;
+
+            try
+            {
+                quiz = await quizzes.Find($"{{ Owner: '{owner}', Name: '{quizName}' }}").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return quiz.ToJson();
+        }
+
+        public static async Task<string> GetAllQuizzesAsync(string owner)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
+
+            List<BsonDocument> listOfQuizzes = new List<BsonDocument>();
+            try
+            {
+                listOfQuizzes = await quizzes.Find($"{{ Owner: '{owner}'}}").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return listOfQuizzes.ToArray().ToJson();
         }
     }
 }
