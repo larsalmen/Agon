@@ -23,6 +23,7 @@ namespace Agon.Controllers
             var token = AgonManager.GetSpotifyTokens(this);
             var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
 
+
             var currentQuiz = JsonConvert.SerializeObject(newQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
 
@@ -50,7 +51,7 @@ namespace Agon.Controllers
             
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz,id);
 
-            await MongoManager.UpdateOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
@@ -63,6 +64,22 @@ namespace Agon.Controllers
             var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
             return View(quizToEdit);
+        }
+        public async Task SaveQuiz()
+        {
+            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+
+            if (await MongoManager.CheckIfQuizExistsAsync(quiz.Owner,quiz.Name))
+            {
+                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
+            }
+            else
+            {
+                await MongoManager.SaveQuizAsync(jsonQuiz);
+            }
+  
+
         }
     }
 }

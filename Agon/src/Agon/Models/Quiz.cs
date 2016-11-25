@@ -21,7 +21,7 @@ namespace Agon.Models
         public Quiz()
         {
             Songs = new List<Song>();
-            _id = Guid.NewGuid().ToString();
+
         }
 
     }
