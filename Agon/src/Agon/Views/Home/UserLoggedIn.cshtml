@@ -1,12 +1,30 @@
 ﻿@model UserVM
 <!--<p>Du är inloggad som tusan med @Model.Username!</p>-->
+@if (Model.Quizzes.Count == 1)
+{
+    <h1>Min quiz</h1>
+}
+else if (Model.Quizzes.Count > 1)
+{
+    <h1>Mina quizzar</h1>
+}
+else
+{
+    <h1>Skapa din första quiz!</h1>
+}
 <div class="list-group" style="display:inline-block;">
     @foreach (var quiz in Model.Quizzes)
     {
-    <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
+        <form asp-controller="Home" asp-action="Quiz">
+            <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
+            <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
+            <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
+        </form>
     }
     <br />
-    <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success">Lägg till quiz</a>
+    <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success clearfix">
+        <span class="glyphicon glyphicon-plus"></span> Importera playlist från Spotify
+    </a>
 </div>
 
 
