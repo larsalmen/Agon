@@ -3,7 +3,7 @@
 <div class="list-group">
     @foreach (var playlist in Model)
     {
-        <form asp-controller="Quiz" asp-action="Create">
+        <form asp-controller="Quiz" asp-action="Create" onsubmit="return confirm('Vill du skapa en quiz från playlisten @playlist.Name?');">
             <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
             <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
             <input type="submit" value="@playlist.Name" />
