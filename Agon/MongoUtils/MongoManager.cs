@@ -31,10 +31,10 @@ namespace MongoUtils
 
             var quizzes = agony.GetCollection<BsonDocument>(collection);
 
-            var document = BsonDocument.Parse(quizJson);
+            var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await quizzes.InsertOneAsync(document);
+                await quizzes.InsertOneAsync(quiz);
             }
             catch (Exception ex)
             {
@@ -81,6 +81,25 @@ namespace MongoUtils
             }
 
             return listOfQuizzes.ToArray().ToJson();
+        }
+
+        public static async Task UpdateOneQuizAsync(string owner, string quizName, string quizJson)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
+
+            var quiz = BsonDocument.Parse(quizJson);
+            try
+            {
+                await quizzes.FindOneAndReplaceAsync<BsonDocument>($"{{ Owner: '{owner}', Name: '{quizName}'}}", quiz);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
     }
 }

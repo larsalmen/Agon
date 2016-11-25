@@ -12,6 +12,7 @@ using Agon.Models;
 using AspNet.Security.OAuth.Spotify;
 using MongoUtils;
 using SpotifyUtils;
+using Microsoft.AspNetCore.Identity.MongoDB;
 
 namespace Agon
 {
@@ -36,6 +37,7 @@ namespace Agon
             // Register identity framework services and also Mongo storage. 
             services.AddIdentityWithMongoStores(MongoManager.MongoConnection)                
                 .AddDefaultTokenProviders();
+
 
 
 

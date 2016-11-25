@@ -25,9 +25,9 @@ namespace Agon.Controllers
             this.signInManager = signInManager;
         }
 
-        [HttpPost]
+
         [AllowAnonymous]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        public IActionResult Login(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
