@@ -26,8 +26,7 @@ namespace Agon
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            //MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
-            MongoManager.SetupEnvironmentVariables(@"mongodb://agon:D7jbwr0RslGa3KH5Ba5DDxQ03slv3QMi624agWTaC20gc6tlthN84wWIn1uz4ffBWe5qROMXs4cktMNCZ6DXYw==@agon.documents.azure.com:10250/agony?ssl=true&sslverifycertificate=false");
+            MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
             SpotifyManager.SetVariables(Configuration["SpotifyClientId"], Configuration["SpotifyClientSecret"]);
          }
 
