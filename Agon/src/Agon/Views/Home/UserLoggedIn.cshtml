@@ -1,17 +1,15 @@
 ﻿@model UserVM
-{
-    <p>Du är inloggad som tusan med @Model.Username!</p>
+<p>Du är inloggad som tusan med @Model.Username!</p>
 
-    <div class="list-group">
-        @foreach (var quiz in Model.Quizzes)
-        {
-            <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
-        }
-        <a href="Quiz/Hej" class="list-group-item">Lägg till quiz</a>
-    </div>
+<div class="list-group">
+    @foreach (var quiz in Model.Quizzes)
+    {
+        <a href="Quiz/@quiz.Name" class="list-group-item">@quiz.Name</a>
+    }
+    <a href="Quiz/Hej" class="list-group-item">Lägg till quiz</a>
+</div>
 
 
-    <form asp-controller="Home" asp-action="ViewPlaylists" method="post">
-        <button type="submit">Get playlists!</button>
-    </form>
-}
+<form asp-controller="Home" asp-action="ViewPlaylists" method="post">
+    <button type="submit">Get playlists!</button>
+</form>
