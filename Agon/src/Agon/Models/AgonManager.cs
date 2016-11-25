@@ -122,5 +122,14 @@ namespace Agon.Models
 
             return editSongVM;
         }
+
+        public static async Task<UserVM> GetUserVMAsync(string username, bool loggedIn)
+        {
+            List<Quiz> quizzes = new List<Quiz>();
+            quizzes = JsonConvert.DeserializeObject<List<Quiz>>(await MongoManager.GetAllQuizzesAsync(username));
+            var userVM = new UserVM(username, quizzes, loggedIn);
+
+            return userVM;
+        }
     }
 }

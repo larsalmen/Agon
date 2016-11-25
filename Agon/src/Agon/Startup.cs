@@ -34,9 +34,10 @@ namespace Agon
         public void ConfigureServices(IServiceCollection services)
         {
             // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)
-
+            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)                
                 .AddDefaultTokenProviders();
+
+
 
             services.AddMvc();
             services.AddSession();
@@ -57,6 +58,9 @@ namespace Agon
             app.UseStaticFiles();
             
             app.UseIdentity();
+
+
+
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()

@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Identity.MongoDB;
 using SpotifyUtils;
 using Microsoft.AspNetCore.Http;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Agon.Controllers
 {
     [Authorize]
@@ -21,7 +19,7 @@ namespace Agon.Controllers
         {
             var username = User.Identity.Name;
 
-            var userVM = await AgonManager.GetUserVMAsync("User", username, User.Identity.IsAuthenticated);
+            var userVM = await AgonManager.GetUserVMAsync(username, User.Identity.IsAuthenticated);
 
             return View(userVM);
         }
