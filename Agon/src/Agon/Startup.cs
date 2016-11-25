@@ -12,6 +12,7 @@ using Agon.Models;
 using AspNet.Security.OAuth.Spotify;
 using MongoUtils;
 using SpotifyUtils;
+using Microsoft.AspNetCore.Identity.MongoDB;
 
 namespace Agon
 {
@@ -25,7 +26,8 @@ namespace Agon
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
+            //MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
+            MongoManager.SetupEnvironmentVariables(@"mongodb://agon:D7jbwr0RslGa3KH5Ba5DDxQ03slv3QMi624agWTaC20gc6tlthN84wWIn1uz4ffBWe5qROMXs4cktMNCZ6DXYw==@agon.documents.azure.com:10250/agony?ssl=true&sslverifycertificate=false");
             SpotifyManager.SetVariables(Configuration["SpotifyClientId"], Configuration["SpotifyClientSecret"]);
          }
 
@@ -33,12 +35,11 @@ namespace Agon
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Register identity framework services and also Mongo storage. 
-            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)                
+            // Register identity framework services and also Mongo storage.
+            services.AddIdentity<IdentityUser, IdentityRole>(o => o.Cookies.ApplicationCookie.LoginPath = "/Account/ExternalLogin");
+            services.AddIdentityWithMongoStores(MongoManager.MongoConnection)
                 .AddDefaultTokenProviders();
-
-
-
+            
             services.AddMvc();
             services.AddSession();
         }

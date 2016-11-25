@@ -24,15 +24,17 @@ namespace Agon.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-
+        
+        [HttpGet]
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        public IActionResult ExternalLogin(string returnUrl = null)
         {
+            const string Provider = "Spotify";
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
+            return Challenge(properties, Provider);
         }
         //[AllowAnonymous]
         //[HttpGet]
