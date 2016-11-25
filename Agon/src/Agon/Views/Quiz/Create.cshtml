@@ -4,8 +4,15 @@
 
 @foreach (var song in Model.Songs)
 {
-    <form asp-controller="Quiz" asp-action="EditSong">
-        <input type="hidden" name="id" value='@Json.Serialize(song)'/>
-        <input type="submit" value="@song.Artist - @song.Title" />
-    </form>
+<form asp-controller="Quiz" asp-action="EditSong">
+    <input type="hidden" name="id" value='@Json.Serialize(song)' />
+    <input type="submit" value="@song.Artist - @song.Title" />
+</form>
 }
+<br />
+<br />
+<br />
+<br />
+
+<button class="btn btn-primary" id="saveQuiz">Save quiz!</button>
+<script src="~/js/SaveQuizAjax.js"></script>

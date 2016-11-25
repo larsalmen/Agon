@@ -64,5 +64,21 @@ namespace Agon.Controllers
 
             return View(quizToEdit);
         }
+        public async Task SaveQuiz()
+        {
+            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+
+            if (await MongoManager.CheckIfQuizExistsAsync(quiz.Owner,quiz.Name))
+            {
+                await MongoManager.UpdateOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
+            }
+            else
+            {
+                await MongoManager.SaveQuizAsync(jsonQuiz);
+            }
+  
+
+        }
     }
 }
