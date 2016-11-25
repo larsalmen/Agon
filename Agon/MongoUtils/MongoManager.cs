@@ -28,7 +28,6 @@ namespace MongoUtils
         public async static Task SaveQuizAsync(string quizJson)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-
             var quizzes = agony.GetCollection<BsonDocument>(collection);
 
             var quiz = BsonDocument.Parse(quizJson);
@@ -45,7 +44,6 @@ namespace MongoUtils
         public async static Task<string> GetOneQuizAsync(string owner, string quizName)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-
             var quizzes = agony.GetCollection<BsonDocument>(collection);
 
             BsonDocument quiz;
@@ -92,13 +90,34 @@ namespace MongoUtils
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await quizzes.FindOneAndReplaceAsync<BsonDocument>($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                await quizzes.FindOneAndUpdateAsync<BsonDocument>($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
+        }
+
+        public static async Task<bool> CheckIfQuizExistsAsync(string owner, string quizName)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
+            long count;
+            bool exists = false;
+            try
+            {
+                count = await quizzes.Find($"{{ Name: '{quizName}', Owner: '{owner}'}}").CountAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            if (count > 0)
+                exists = true;
+
+            return exists;
         }
     }
 }

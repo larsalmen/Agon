@@ -103,12 +103,12 @@ namespace Agon.Models
                 counter++;
             }
 
-
-            // Just for shits and giggles, save dis bad boy to the database.
-            //var quizJson = JsonConvert.SerializeObject(quiz);
-
-            //await MongoManager.SaveQuizAsync(quizJson);
-
+            // This checks if a quiz exists, and if it does it does NOT try to save it.
+            if (!await MongoManager.CheckIfQuizExistsAsync(quiz.Owner, quiz.Name))
+            {
+                var quizJson = JsonConvert.SerializeObject(quiz);
+                await MongoManager.SaveQuizAsync(quizJson);
+            }
             return quiz;
         }
         public static EditSongVM CreateEditSongVM(string song)
