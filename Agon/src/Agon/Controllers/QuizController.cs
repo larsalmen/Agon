@@ -42,18 +42,27 @@ namespace Agon.Controllers
         }
 
         [HttpPost]
-
         public async Task<IActionResult> UpdateQuestions(string id)
         {
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
-
+            
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz,id);
 
-            await MongoManager.SaveQuizAsync(JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.UpdateOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
 
-            return RedirectToAction("ViewPlaylists", "Home");
+            var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
+            HttpContext.Session.SetString("currentQuiz", currentQuiz);
+
+            return RedirectToAction("EditQuiz", "Quiz");
+        }
+        public IActionResult EditQuiz()
+        {
+            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+
+            return View(quizToEdit);
         }
     }
 }

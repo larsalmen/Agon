@@ -45,6 +45,7 @@ namespace Agon.Models
 
             var song = updatedQuiz.Songs.Where(s => s.SpotifyReferenceID == id).FirstOrDefault();
 
+            song.Questions.Clear();
             for (int i = 0; i < questionText.Count; i++)
             {
                 song.Questions.Add(new Question { Text = questionText[i], CorrectAnswer = answerText[i] });
@@ -106,7 +107,7 @@ namespace Agon.Models
             // Just for shits and giggles, save dis bad boy to the database.
             //var quizJson = JsonConvert.SerializeObject(quiz);
 
-            //MongoManager.SaveQuiz(quizJson);
+            //await MongoManager.SaveQuizAsync(quizJson);
 
             return quiz;
         }
@@ -115,10 +116,23 @@ namespace Agon.Models
             var newSong = JsonConvert.DeserializeObject<Song>(song);
             var editSongVM = new EditSongVM(newSong.Artist,newSong.Title,newSong.SpotifyReferenceID);
 
-            editSongVM.Questions.Add(new Question { Text = "What is the name of the song?", CorrectAnswer = newSong.Title });
-            editSongVM.Questions.Add(new Question { Text = "What is the name of the artist?", CorrectAnswer = newSong.Artist });
-            editSongVM.Questions.Add(new Question { Text = "What is the name of the album?", CorrectAnswer = newSong.AlbumTitle });
-            editSongVM.Questions.Add(new Question { Text = "When was this song released?", CorrectAnswer = newSong.RealeaseDate });
+            if(newSong.Questions.Count == 0)
+            {
+                editSongVM.Questions.Add(new Question { Text = "What is the name of the song?", CorrectAnswer = newSong.Title });
+                editSongVM.Questions.Add(new Question { Text = "What is the name of the artist?", CorrectAnswer = newSong.Artist });
+                editSongVM.Questions.Add(new Question { Text = "What is the name of the album?", CorrectAnswer = newSong.AlbumTitle });
+                editSongVM.Questions.Add(new Question { Text = "When was this song released?", CorrectAnswer = newSong.RealeaseDate });
+            }
+            else
+            {
+                foreach (var question in newSong.Questions)
+                {
+                    editSongVM.Questions.Add(new Question { Text = question.Text, CorrectAnswer = question.CorrectAnswer });
+
+                }
+
+            }
+
 
             return editSongVM;
         }
