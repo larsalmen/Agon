@@ -1,18 +1,19 @@
 ﻿@model Quiz
 
 <h1>Create your quiz!</h1>
+<div class="list-group" style="display:inline-block;">
 
-@foreach (var song in Model.Songs)
-{
-<form asp-controller="Quiz" asp-action="EditSong">
-    <input type="hidden" name="id" value='@Json.Serialize(song)' />
-    <input type="submit" value="@song.Artist - @song.Title" />
-</form>
-}
+    @foreach (var song in Model.Songs)
+    {
+    <form asp-controller="Quiz" asp-action="EditSong">
+        <input type="hidden" name="id" value='@Json.Serialize(song)' />
+        <input type="submit" value="@song.Artist - @song.Title" />
+    </form>
+    }
+</div>
 <br />
 <br />
 <br />
 <br />
-
 <button class="btn btn-primary" id="saveQuiz">Save quiz!</button>
 <script src="~/js/SaveQuizAjax.js"></script>
