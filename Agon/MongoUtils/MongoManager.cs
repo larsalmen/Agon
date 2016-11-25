@@ -18,7 +18,7 @@ namespace MongoUtils
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
 
-        public static void SetupEnvironmentVariables(string mongoConnection)
+        public static void SetupMongoClient(string mongoConnection)
         {
             MongoConnection = mongoConnection;
             mongoClient = new MongoClient(MongoConnection);

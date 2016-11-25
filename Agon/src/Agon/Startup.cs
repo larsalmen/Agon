@@ -24,11 +24,11 @@ namespace Agon
                 .SetBasePath(env.ContentRootPath);
 
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
 
-            MongoManager.SetupEnvironmentVariables(Configuration["MongoConnection"]);
+            Configuration = builder.Build();
+            MongoManager.SetupMongoClient(Configuration["MongoConnection"]);
             SpotifyManager.SetVariables(Configuration["SpotifyClientId"], Configuration["SpotifyClientSecret"]);
-         }
+        }
 
         public IConfigurationRoot Configuration { get; }
 
@@ -38,7 +38,7 @@ namespace Agon
             services.AddIdentity<IdentityUser, IdentityRole>(o => o.Cookies.ApplicationCookie.LoginPath = "/Account/ExternalLogin");
             services.AddIdentityWithMongoStores(MongoManager.MongoConnection)
                 .AddDefaultTokenProviders();
-            
+
             services.AddMvc();
             services.AddSession();
         }
@@ -46,21 +46,14 @@ namespace Agon
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseSession();
-            if (env.IsDevelopment())
-            {
+
+            //if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            //else
+            //    app.UseExceptionHandler("/Home/Error");
 
             app.UseStaticFiles();
-            
             app.UseIdentity();
-
-
-
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
             app.UseSpotifyAuthentication(new SpotifyAuthenticationOptions()
@@ -78,6 +71,11 @@ namespace Agon
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            //app.Run(async (context) =>
+            //{
+            //    var output = Configuration["MongoConnection"];
+            //    await context.Response.WriteAsync("Output:" + output);
+            //});
         }
     }
 }
