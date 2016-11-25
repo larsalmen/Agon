@@ -6,7 +6,7 @@
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
-    padding: 20px;
+    /*padding: 20px;*/
 }
 
 .footer {
@@ -35,3 +35,7 @@ body {
     .cover.playing {
         border: 5px solid #e45343;
     }
+
+.navbar{
+    margin: 5px;
+}
