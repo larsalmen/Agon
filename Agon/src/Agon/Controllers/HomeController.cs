@@ -41,6 +41,8 @@ namespace Agon.Controllers
 
             var viewmodel = await AgonManager.GetPlaylists(token);
 
+            SpotifyManager.CheckToken(token);
+
             return View(viewmodel);
         }
 

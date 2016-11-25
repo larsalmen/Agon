@@ -36,20 +36,7 @@ namespace Agon.Controllers
             var properties = signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
             return Challenge(properties, Provider);
         }
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public IActionResult Login(string str = null)
-        //{
-        //    return View();
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost]
-        //public string Login()
-        //{
-        //    return "Inloggad";
-        //}
-
+       
         [AllowAnonymous]
         [HttpPost]
         public string Fail()
@@ -57,37 +44,7 @@ namespace Agon.Controllers
             return "Fail";
         }
 
-        /*[AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> Login(AccountLoginVM viewModel, string returnUrl)
-        {
-            if (!ModelState.IsValid)
-                return View(viewModel);
-
-            // Skapa DB-schemat
-            //await identityContext.Database.EnsureCreatedAsync();
-
-            // Create user
-            //var user = new IdentityUser("pontus");
-            //var result = await userManager.CreateAsync(user, "Pontus_1234");
-
-            var result = await signInManager.PasswordSignInAsync(
-                viewModel.Username, viewModel.Password, false, false);
-
-            if (!result.Succeeded)
-            {
-                ModelState.AddModelError(nameof(AccountLoginVM.Username),
-                    "Incorrect login credentials");
-                return View(viewModel);
-            }
-
-            if (string.IsNullOrWhiteSpace(returnUrl))
-                return RedirectToAction(nameof(AccountController.Index));
-            else
-                return Redirect(returnUrl);
-        }*/
-
-
+       
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -145,7 +102,6 @@ namespace Agon.Controllers
 
         }
        
-
         private IActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))

@@ -113,5 +113,49 @@ namespace SpotifyUtils
             var albumInfo = JsonConvert.DeserializeObject<ListOfAlbumInfo>(text);
             return albumInfo;
         }
+        public static void CheckToken(SpotifyTokens token)
+        {
+            // Parses the timestamp to UTC, adds expiration time and checks if that time has passed.
+            var timestamp = DateTime.Parse(token.Timestamp).ToUniversalTime();
+            if (timestamp.AddSeconds(3550) > DateTime.UtcNow)
+            {
+                // Exchange refresh tokens and such with Spotify.
+                string authHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(SpotifyClientId + ":" + SpotifyClientSecret));
+                var postData = "grant_type=refresh_token";
+                postData += "&refresh_token=" + token.RefreshToken;
+                var data = Encoding.ASCII.GetBytes(postData);
+
+                var endpoint = @"https://accounts.spotify.com/api/token";
+                var request = WebRequest.CreateHttp(endpoint);
+
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.Headers.Set("Authorization", authHeader);
+                request.ContentLength = data.Length;
+
+                using (Stream requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(data, 0, data.Length);
+                }
+
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                   // Get some cool error handling in here.
+                }
+
+                var responseBody = "";
+
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    responseBody = reader.ReadToEnd();
+                }
+
+                // Actually update the token info here.
+
+            }
+        }
     }
 }

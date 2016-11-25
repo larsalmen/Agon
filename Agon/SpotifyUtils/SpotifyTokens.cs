@@ -10,16 +10,16 @@ namespace SpotifyUtils
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
-        public string RecievedAt { get; set; }
+        public string Timestamp { get; set; }
 
         public string Username { get; set; }
 
 
-        public SpotifyTokens(string accessToken, string refreshToken, string recievedAt, string username)
+        public SpotifyTokens(string accessToken, string refreshToken, string timestamp, string username)
         {
             AccessToken = accessToken;
             RefreshToken = refreshToken;
-            RecievedAt = recievedAt;
+            Timestamp = timestamp;
             Username = username;
         }
     }

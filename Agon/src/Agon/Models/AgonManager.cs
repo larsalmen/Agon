@@ -21,7 +21,7 @@ namespace Agon.Models
             return new SpotifyTokens(
                 controller.HttpContext.Session.GetString("access_token"),
                 controller.HttpContext.Session.GetString("refresh_token"),
-                controller.HttpContext.Session.GetString("expires_at"),
+                controller.HttpContext.Session.GetString("timestamp"),
                 controller.User.Identity.Name
                 );
         }
@@ -35,8 +35,8 @@ namespace Agon.Models
             var refresh_token = info.AuthenticationTokens.Where(x => x.Name == "refresh_token").Select(y => y.Value).FirstOrDefault();
             session.SetString("refresh_token", refresh_token);
 
-            var recieved_at = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
-            session.SetString("recieved_at", recieved_at);
+            var timestamp = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
+            session.SetString("timestamp", timestamp);
         }
 
         internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz,string id)
