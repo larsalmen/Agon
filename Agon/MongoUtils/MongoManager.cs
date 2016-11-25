@@ -81,7 +81,7 @@ namespace MongoUtils
             return listOfQuizzes.ToArray().ToJson();
         }
 
-        public static async Task UpdateOneQuizAsync(string owner, string _id, string quizJson)
+        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
@@ -90,7 +90,7 @@ namespace MongoUtils
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await quizzes.FindOneAndUpdateAsync<BsonDocument>($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                await quizzes.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
             }
             catch (Exception ex)
             {

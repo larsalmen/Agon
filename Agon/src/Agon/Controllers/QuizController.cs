@@ -50,7 +50,7 @@ namespace Agon.Controllers
             
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz,id);
 
-            await MongoManager.UpdateOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
