@@ -73,6 +73,7 @@ namespace Agon.Models
             var allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
 
             var quiz = new Quiz();
+            quiz._id = Guid.NewGuid().ToString();
 
             quiz.Name = viewModel.Name;
             quiz.Owner = token.Username;

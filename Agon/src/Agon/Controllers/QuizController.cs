@@ -23,6 +23,7 @@ namespace Agon.Controllers
             var token = AgonManager.GetSpotifyTokens(this);
             var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
 
+
             var currentQuiz = JsonConvert.SerializeObject(newQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
 
