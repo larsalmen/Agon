@@ -26,32 +26,15 @@ namespace SpotifyUtils
         {
             // Checks if the accestoken has expired.
             CheckToken(token);
-
             string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists";
 
-            WebHeaderCollection headerCollection = new WebHeaderCollection();
-
-            headerCollection.Add("Accept-Encoding:gzip,deflate,compress");
-            headerCollection.Add("Authorization:Bearer " + token.AccessToken);
-
-            var request = WebRequest.CreateHttp(endpoint);
-            request.Host = "api.spotify.com";
-            request.Accept = "application/json";
-            request.ContentType = "application/json";
-            request.Headers = headerCollection;
-
-            var response = await request.GetResponseAsync();
-            // Get some ifs in here to check whether gzip or other encoding is used. Also, try-catch.
-            string text = "";
-            using (var stream = new StreamReader(new GZipStream(response.GetResponseStream(), CompressionMode.Decompress)))
-            {
-                text = stream.ReadToEnd();
-            }
+            string text = await HttpRequest(token, endpoint);
 
             var listOfPlaylists = JsonConvert.DeserializeObject<ListOfPlaylists>(text);
             listOfPlaylists.Items = listOfPlaylists.Items.Where(i => i.Tracks.Total < 20).ToList();
             return listOfPlaylists;
         }
+
 
         public static async Task<ListOfSongs> GetAllSongsFromPlaylist(SpotifyTokens token, string spotifyRef)
         {
@@ -59,26 +42,8 @@ namespace SpotifyUtils
             CheckToken(token);
 
             string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(artists,name,href,album(name,href)))";
-            //string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/";
 
-            WebHeaderCollection headerCollection = new WebHeaderCollection();
-
-            headerCollection.Add("Accept-Encoding:gzip,deflate,compress");
-            headerCollection.Add("Authorization:Bearer " + token.AccessToken);
-
-            var request = WebRequest.CreateHttp(endpoint);
-            request.Host = "api.spotify.com";
-            request.Accept = "application/json";
-            request.ContentType = "application/json";
-            request.Headers = headerCollection;
-
-            var response = await request.GetResponseAsync();
-            // Get some ifs in here to check whether gzip or other encoding is used. Also, try-catch.
-            string text = "";
-            using (var stream = new StreamReader(new GZipStream(response.GetResponseStream(), CompressionMode.Decompress)))
-            {
-                text = stream.ReadToEnd();
-            }
+            string text = await HttpRequest(token, endpoint);
 
             var listOfSongs = JsonConvert.DeserializeObject<ListOfSongs>(text);
 
@@ -101,31 +66,45 @@ namespace SpotifyUtils
             }
             endpoint.Remove(endpoint.Length - 1, 1);
 
-            WebHeaderCollection headerCollection = new WebHeaderCollection();
-
-            headerCollection.Add("Accept-Encoding:gzip,deflate,compress");
-            headerCollection.Add("Authorization:Bearer " + token.AccessToken);
-
-            var request = WebRequest.CreateHttp(endpoint.ToString());
-            request.Host = "api.spotify.com";
-            request.Accept = "application/json";
-            request.ContentType = "application/json";
-            request.Headers = headerCollection;
-
-            var response = await request.GetResponseAsync();
-            // Get some ifs in here to check whether gzip or other encoding is used. Also, try-catch.
-            string text = "";
-            using (var stream = new StreamReader(new GZipStream(response.GetResponseStream(), CompressionMode.Decompress)))
-            {
-                text = stream.ReadToEnd();
-            }
+            string text = await HttpRequest(token, endpoint.ToString());
 
             var albumInfo = JsonConvert.DeserializeObject<ListOfAlbumInfo>(text);
             return albumInfo;
         }
+        private static async Task<string> HttpRequest(SpotifyTokens token, string endpoint)
+        {
+
+            string text = "";
+            try
+            {
+                WebHeaderCollection headerCollection = new WebHeaderCollection();
+
+                headerCollection.Add("Accept-Encoding:gzip,deflate,compress");
+                headerCollection.Add("Authorization:Bearer " + token.AccessToken);
+
+                var request = WebRequest.CreateHttp(endpoint);
+                request.Host = "api.spotify.com";
+                request.Accept = "application/json";
+                request.ContentType = "application/json";
+                request.Headers = headerCollection;
+
+                var response = await request.GetResponseAsync();
+                // Get some ifs in here to check whether gzip or other encoding is used. Also, try-catch.
+                using (var stream = new StreamReader(new GZipStream(response.GetResponseStream(), CompressionMode.Decompress)))
+                {
+                    text = stream.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return text;
+        }
         private static void CheckToken(SpotifyTokens token)
         {
-            // Parses the timestamp to Datetime, adds expiration time and checks if that time has passed.
+            // Parses the timestamp to Datetime, adds expiration time (3600 seconds isch) and checks if that time has passed.
             if (DateTime.Parse(token.Timestamp).AddSeconds(3540) < DateTime.Now)
             {
                 // Builds a correct refresh request to post to spotify.
@@ -152,7 +131,7 @@ namespace SpotifyUtils
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                   // Get some cool error handling in here.
+                    // Get some cool error handling in here.
                 }
 
                 // Reads the streams content into the responseBody variable.

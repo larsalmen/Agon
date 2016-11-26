@@ -110,10 +110,10 @@ namespace Agon.Models
             }
 
             // This checks if a quiz exists, and if it does it does NOT try to save it.
-            if (!await MongoManager.CheckIfQuizExistsAsync(quiz.Owner, quiz.Name))
+            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
             {
                 var quizJson = JsonConvert.SerializeObject(quiz);
-                await MongoManager.SaveQuizAsync(quizJson);
+                await MongoManager.SaveDocumentAsync(quizJson);
             }
             return quiz;
         }

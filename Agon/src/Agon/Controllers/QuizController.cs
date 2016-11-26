@@ -70,13 +70,13 @@ namespace Agon.Controllers
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
             var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
-            if (await MongoManager.CheckIfQuizExistsAsync(quiz.Owner,quiz.Name))
+            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner,quiz.Name))
             {
                 await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
             }
             else
             {
-                await MongoManager.SaveQuizAsync(jsonQuiz);
+                await MongoManager.SaveDocumentAsync(jsonQuiz);
             }
   
 
