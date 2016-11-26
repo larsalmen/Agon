@@ -18,12 +18,14 @@ namespace Agon.Models
 
         public static SpotifyTokens GetSpotifyTokens(Controller controller)
         {
-            return new SpotifyTokens(
+            var token = new SpotifyTokens(
                 controller.HttpContext.Session.GetString("access_token"),
                 controller.HttpContext.Session.GetString("refresh_token"),
                 controller.HttpContext.Session.GetString("timestamp"),
                 controller.User.Identity.Name
                 );
+
+            return token;
         }
 
 
@@ -35,7 +37,10 @@ namespace Agon.Models
             var refresh_token = info.AuthenticationTokens.Where(x => x.Name == "refresh_token").Select(y => y.Value).FirstOrDefault();
             session.SetString("refresh_token", refresh_token);
 
-            var timestamp = info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault();
+            var timestamp = DateTime.Parse(
+                info.AuthenticationTokens.Where(x => x.Name == "expires_at").Select(y => y.Value).FirstOrDefault()
+                ).ToUniversalTime().ToString();
+
             session.SetString("timestamp", timestamp);
         }
 

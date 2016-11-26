@@ -22,5 +22,7 @@ namespace SpotifyUtils
             Timestamp = timestamp;
             Username = username;
         }
+
+
     }
 }
