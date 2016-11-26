@@ -58,7 +58,7 @@ namespace Agon.Controllers
 
             return RedirectToAction("EditQuiz", "Quiz");
         }
-        public IActionResult EditQuiz() // 2016-11-25 21:31 - Här kan man ta i _id och få det från Home/ViewPlaylists, om man vill och behöver
+        public IActionResult EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
         {
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
             var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
