@@ -27,7 +27,7 @@ namespace Agon.Controllers
             var currentQuiz = JsonConvert.SerializeObject(newQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
 
-            return View(newQuiz);
+            return RedirectToAction("EditQuiz");
         }
 
         public IActionResult AddSong()
