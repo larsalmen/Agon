@@ -67,12 +67,21 @@ results.addEventListener('click', function (e) {
     var clicked = e.target;
     if (clicked !== null && clicked.id == 'add-single-song') {
         var hrefAttribute = clicked.getAttribute("song-id");
-        alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: " + hrefAttribute + " ...vilket är hrefen till sången du klickade på.");
-        $.post("/Quiz/AddSingleSong", { 'href': hrefAttribute });
-
-        //Här ska vi göra något som ger användaren feedback på att låten faktiskt addades.
+        //alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: " + hrefAttribute + " ...vilket är hrefen till sången du klickade på.");
+        clicked.children[0].classList.remove('glyphicon-plus');
+        clicked.children[0].classList.add('glyphicon-refresh');
+        $.ajax({
+            url: "/Quiz/AddSingleSong",
+            data: { 'href': hrefAttribute }
+        }).done(function () {       //när anropet är klart gör följande.
+            clicked.children[0].classList.remove('glyphicon-refresh');
+            clicked.children[0].classList.add('glyphicon-ok');
+            clicked.children[1].innerHTML = "  Song added &nbsp&nbsp";  //2 spaces för att behålla storlektne
+        });
     }
 });
+
+
 
 //var fetchTracks = function (albumId, callback) {
 //    $.ajax({
