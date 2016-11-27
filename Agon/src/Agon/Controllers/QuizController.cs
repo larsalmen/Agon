@@ -34,6 +34,17 @@ namespace Agon.Controllers
         {
             return View();
         }
+
+        public void AddSingleSong(string href)
+        {
+            //this method is an ajax call from javascript SearchSpotifyForAlbumAndPlay30Sec.js
+            //the incoming variable href is the full href to a song (example: https://api.spotify.com/v1/tracks/0niC3Stpj4rX4Ul3udkbUO)
+            
+            //[] run method for extracting the song id from the last part of href-string
+
+            //add this single song to quiz
+        }
+
         [HttpPost]
         public IActionResult EditSong(string id)
         {

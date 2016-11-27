@@ -17,6 +17,10 @@ var searchTracks = function (query) {
     });
 };
 
+document.getElementById('search-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    searchTracks(document.getElementById('query').value);
+}, false);
 
 results.addEventListener('click', function (e) {
     var playIcon = 'glyphicon-play';
@@ -59,10 +63,16 @@ results.addEventListener('click', function (e) {
     }
 });
 
-document.getElementById('search-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    searchTracks(document.getElementById('query').value);
-}, false);
+results.addEventListener('click', function (e) {
+    var clicked = e.target;
+    if (clicked !== null && clicked.id == 'add-single-song') {
+        var hrefAttribute = clicked.getAttribute("song-id");
+        alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: " + hrefAttribute + " ...vilket är hrefen till sången du klickade på.");
+        $.post("/Quiz/AddSingleSong", { 'href': hrefAttribute });
+
+        //Här ska vi göra något som ger användaren feedback på att låten faktiskt addades.
+    }
+});
 
 //var fetchTracks = function (albumId, callback) {
 //    $.ajax({

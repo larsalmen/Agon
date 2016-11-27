@@ -1,7 +1,7 @@
 ﻿<div class="container">
     <h1>Lägg till låt till ditt quiz</h1>
     <form id="search-form">
-        <input type="text" id="query" value="" class="form-control" placeholder="Type an Artist Name" />
+        <input type="text" id="query" value="" class="form-control" placeholder="Search for a song" />
         <input type="submit" id="search" class="btn btn-primary btn-lg" value="Search" />
     </form>
     <div id="results"></div>
@@ -29,11 +29,11 @@
             </td>
             @*<td><a href="#" preview-url="{{preview_url}}" class="play-button">Play!</a></td>*@
             <td>
-                <form asp-controller="Quiz" asp-action="AddSong">
-                    <button type="button" class="btn btn-success">
+                @*<form asp-controller="Quiz" asp-action="AddSong" value="{{href}}">*@
+                    <button id="add-single-song" type="button" class="btn btn-success" song-id="{{href}}">    
                         <span class="glyphicon glyphicon-plus"></span> Add to playlist
                     </button>
-                </form>
+                @*</form>*@
             </td>
         </tr>
 
