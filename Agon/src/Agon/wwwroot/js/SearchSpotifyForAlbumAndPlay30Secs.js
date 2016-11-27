@@ -67,9 +67,9 @@ results.addEventListener('click', function (e) {
     var clicked = e.target;
     if (clicked !== null && clicked.id == 'add-single-song') {
         var hrefAttribute = clicked.getAttribute("song-id");
-        //alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: " + hrefAttribute + " ...vilket är hrefen till sången du klickade på.");
         clicked.children[0].classList.remove('glyphicon-plus');
         clicked.children[0].classList.add('glyphicon-refresh');
+        alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: \n" + hrefAttribute + "\n...vilket är hrefen till sången du klickade på.");
         $.ajax({
             url: "/Quiz/AddSingleSong",
             data: { 'href': hrefAttribute }
