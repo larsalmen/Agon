@@ -23,11 +23,11 @@
             <td>{{artists.0.name}}</td>
             <td>{{album.name}}</td>
             <td>
-                <button type="button" class="btn btn-primary">
-                    <span preview-url="{{preview_url}}" class="glyphicon glyphicon-play cover"></span> Play
+                <button type="button" class="btn btn-primary play-button" preview-url="{{preview_url}}">
+                    <span  class="glyphicon glyphicon-play"></span> Play
                 </button>
             </td>
-            @*<td><a href="#" preview-url="{{preview_url}}" class="cover">Play!</a></td>*@
+            @*<td><a href="#" preview-url="{{preview_url}}" class="play-button">Play!</a></td>*@
             <td>
                 <form asp-controller="Quiz" asp-action="AddSong">
                     <button type="button" class="btn btn-success">
@@ -38,7 +38,7 @@
         </tr>
 
         @*<div style="border:1px solid black;"><img src="{{album.images.2.url}}" /> {{name}} - {{artists.0.name}}</div>*@
-        <!--<div style="background-image:url({{album.images.0.url}})" data-album-id="{{id}}" class="cover"></div>-->
+        <!--<div style="background-image:url({{album.images.0.url}})" data-album-id="{{id}}" class="play-button"></div>-->
         {{/each}}
     </table>
 </script>
