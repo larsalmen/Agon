@@ -54,13 +54,11 @@ namespace Agon.Controllers
 
                 await MongoManager.SaveQuizToSession(quizToStore, token.Username);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-              
+                throw;
             }
-
         }
-
         [HttpPost]
         public IActionResult EditSong(string id)
         {

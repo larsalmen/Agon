@@ -157,13 +157,12 @@ namespace SpotifyUtils
             var endpoint = ("https://api.spotify.com/v1/albums/" + albumHref);
 
             string text = await HttpRequest(token, endpoint);
-            //[JSON].albums.[0].release_date
-            //var def = new { albums = new { release_date = "" } };
+
             var def = new { release_date = "" };
 
             var releasedate = JsonConvert.DeserializeAnonymousType(text, def);
 
-            return releasedate.ToString();
+            return releasedate.release_date;
         }
 
         public static async Task<Track> GetOneSong(SpotifyTokens token, string href)

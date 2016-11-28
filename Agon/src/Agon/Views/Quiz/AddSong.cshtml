@@ -4,6 +4,7 @@
         <input type="text" id="query" value="" class="form-control" placeholder="Search for a song" />
         <input type="submit" id="search" class="btn btn-primary btn-lg" value="Search" />
     </form>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("EditQuiz", "Quiz")'">Return to Edit Quiz</button>
     <div id="results"></div>
 </div>
 <script id="results-template" type="text/x-handlebars-template">
@@ -24,18 +25,14 @@
             <td>{{album.name}}</td>
             <td>
                 <button type="button" class="btn btn-primary play-button" preview-url="{{preview_url}}">
-                    <span  class="glyphicon glyphicon-play"></span> Play
+                    <span class="glyphicon glyphicon-play"></span> Play
                 </button>
             </td>
             @*<td><a href="#" preview-url="{{preview_url}}" class="play-button">Play!</a></td>*@
             <td>
-                    <button id="add-single-song" type="button" class="btn btn-success" song-id="{{href}}">    
-                        <span class="glyphicon glyphicon-plus"></span><span> Add to playlist</span>
-                    </button>
-                <form asp-controller="Quiz" asp-action="AddSingleSong">
-                    <input type="hidden" name="href" value="{{href}}" />
-                    <input type="submit" value="Lämna av"/>
-                </form>
+                <button id="add-single-song" type="button" class="btn btn-success" song-id="{{href}}">
+                    <span class="glyphicon glyphicon-plus"></span><span> Add to playlist</span>
+                </button>
             </td>
         </tr>
 
@@ -46,5 +43,3 @@
 </script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
 <script src="~/js/SearchSpotifyForAlbumAndPlay30Secs.js"></script>
-
-<!-- Här kan vi styra upp lägg-till-i-quiz-logiken -->
