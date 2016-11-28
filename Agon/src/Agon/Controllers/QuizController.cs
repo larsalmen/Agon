@@ -62,7 +62,7 @@ namespace Agon.Controllers
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
 
-            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
@@ -100,7 +100,7 @@ namespace Agon.Controllers
 
             if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
             {
-                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
+                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz, "Quizzes");
             }
             else
             {
@@ -114,6 +114,13 @@ namespace Agon.Controllers
         {
             QuizMasterVM quizMasterVM = await AgonManager.StartQuiz(_id);
             return View(quizMasterVM);
+        }
+
+        
+        public async Task DropPin(string id)
+        {
+
+            await MongoManager.RemovePinFromQuiz(id, "runningQuizzes");
         }
     }
 }

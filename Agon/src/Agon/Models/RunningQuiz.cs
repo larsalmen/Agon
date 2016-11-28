@@ -11,7 +11,7 @@ namespace Agon.Models
         {
 
         }
-        public int Pin { get; set; }
+        public string Pin { get; set; }
 
     }
 }

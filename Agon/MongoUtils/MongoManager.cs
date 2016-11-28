@@ -149,16 +149,16 @@ namespace MongoUtils
         /// <param name="_id"></param>
         /// <param name="quizJson"></param>
         /// <returns></returns>
-        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson)
+        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
-            var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
+            var col = agony.GetCollection<BsonDocument>(collection);
 
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await quizzes.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
             }
             catch (Exception ex)
             {
@@ -249,18 +249,23 @@ namespace MongoUtils
         /// <summary>
         /// Finds one quiz matching the "_id" filter in the specified collection and sets the pin to null.
         /// </summary>
-        /// <param name="_id"></param>
+        /// <param name="pin"></param>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public static async Task RemovePinFromQuiz(string _id, string collection)
+        public static async Task RemovePinFromQuiz(string pin, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
             var col = agony.GetCollection<BsonDocument>(collection);
 
+            var filter = Builders<BsonDocument>.Filter.Eq("Pin", pin);
+            var update = Builders<BsonDocument>.Update.Set("Pin", "running");
+            //var result = await col.FindOneAndUpdateAsync(filter, update);
+
+
             try
             {
-                await col.FindOneAndUpdateAsync($"{{ _id: '{_id}'}}", "{ { Pin: undefined } }");
+                await col.FindOneAndUpdateAsync(filter, update);
             }
             catch (Exception ex)
             {

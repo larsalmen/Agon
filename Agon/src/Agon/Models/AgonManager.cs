@@ -132,11 +132,11 @@ namespace Agon.Models
             }
             while (await MongoManager.CheckIfPinExistsAsync(pin.ToString(), "runningQuizzes"));
 
-            runningQuiz.Pin = pin;
+            runningQuiz.Pin = pin.ToString();
             // Stoppa ner quizzet med PIN i runningQuizzes
             if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz._id, JsonConvert.SerializeObject(runningQuiz));
+                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz._id, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
             }
             else
                 await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
