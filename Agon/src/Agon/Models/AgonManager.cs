@@ -104,7 +104,8 @@ namespace Agon.Models
                     Artist = builder.ToString(),
                     AlbumTitle = item.Track.Album.Name,
                     RealeaseDate = allReturnedSongs.AlbumInfo.AlbumInfo[counter].ReleaseDate,
-                    SpotifyReferenceID = item.Track.Href
+                    SpotifyReferenceID = item.Track.Href,
+                    PreviewUrl = item.Track.PreviewUrl
                 });
 
                 counter++;
@@ -165,7 +166,8 @@ namespace Agon.Models
                 Title = newTrack.Name,
                 RealeaseDate = albumDate,
                 AlbumTitle = newTrack.Album.Name,
-                SpotifyReferenceID = newTrack.Href
+                SpotifyReferenceID = newTrack.Href,
+                PreviewUrl = newTrack.PreviewUrl
             };
             return newSong;
         }

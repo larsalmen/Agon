@@ -12,6 +12,7 @@ namespace Agon.Models
         public string RealeaseDate { get; set; }
         public string AlbumTitle { get; set; }
         public string SpotifyReferenceID { get; set; }
+        public string PreviewUrl { get; set; }
 
         public List<Question> Questions { get; set; }
         public Song()
