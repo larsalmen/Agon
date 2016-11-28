@@ -29,11 +29,13 @@
             </td>
             @*<td><a href="#" preview-url="{{preview_url}}" class="play-button">Play!</a></td>*@
             <td>
-                @*<form asp-controller="Quiz" asp-action="AddSong" value="{{href}}">*@
                     <button id="add-single-song" type="button" class="btn btn-success" song-id="{{href}}">    
                         <span class="glyphicon glyphicon-plus"></span><span> Add to playlist</span>
                     </button>
-                @*</form>*@
+                <form asp-controller="Quiz" asp-action="AddSingleSong">
+                    <input type="hidden" name="href" value="{{href}}" />
+                    <input type="submit" value="Lämna av"/>
+                </form>
             </td>
         </tr>
 

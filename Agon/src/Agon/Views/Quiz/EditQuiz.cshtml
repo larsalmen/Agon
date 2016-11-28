@@ -9,6 +9,6 @@
         <input type="submit" value="@song.Artist - @song.Title" />
     </form>
 }
-
+<button class="btn btn-success" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus"></span>Add song</button>
 <button class="btn btn-primary" id="saveQuiz">Save quiz!</button>
 <script src="~/js/SaveQuizAjax.js"></script>

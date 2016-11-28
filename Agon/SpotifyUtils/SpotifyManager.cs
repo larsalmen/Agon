@@ -73,7 +73,6 @@ namespace SpotifyUtils
         }
         private static async Task<string> HttpRequest(SpotifyTokens token, string endpoint)
         {
-
             string text = "";
             try
             {
@@ -151,6 +150,28 @@ namespace SpotifyUtils
                 token.AccessToken = newAccessToken.access_token;
                 token.Timestamp = DateTime.Now.ToString();
             }
+        }
+
+        public static async Task<string> GetOneAlbum(SpotifyTokens token, string albumHref)
+        {
+            var endpoint = ("https://api.spotify.com/v1/albums/" + albumHref);
+
+            string text = await HttpRequest(token, endpoint);
+            //[JSON].albums.[0].release_date
+            //var def = new { albums = new { release_date = "" } };
+            var def = new { release_date = "" };
+
+            var releasedate = JsonConvert.DeserializeAnonymousType(text, def);
+
+            return releasedate.ToString();
+        }
+
+        public static async Task<Track> GetOneSong(SpotifyTokens token, string href)
+        {
+            string text = await HttpRequest(token, href);
+
+            Track newTrack = JsonConvert.DeserializeObject<Track>(text);
+            return newTrack;
         }
     }
 }

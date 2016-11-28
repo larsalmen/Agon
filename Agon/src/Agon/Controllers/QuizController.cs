@@ -30,19 +30,40 @@ namespace Agon.Controllers
             return RedirectToAction("EditQuiz");
         }
 
+        [HttpGet]
         public IActionResult AddSong()
         {
             return View();
         }
 
-        public void AddSingleSong(string href)
+        [HttpPost]
+        public async void AddSingleSong(string href)
         {
+            //var session = HttpContext.Session;
+            //System.Web.SessionState
+
             //this method is an ajax call from javascript SearchSpotifyForAlbumAndPlay30Sec.js
             //the incoming variable href is the full href to a song (example: https://api.spotify.com/v1/tracks/0niC3Stpj4rX4Ul3udkbUO)
-            
-            //[] run method for extracting the song id from the last part of href-string
+            var token = AgonManager.GetSpotifyTokens(this);
+            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
 
-            //add this single song to quiz
+            var newSong = await Task.Run(async () => await AgonManager.AddSongToQuiz(token, href));
+            
+            try
+            {
+                var newQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+                newQuiz.Songs.Add(newSong);
+
+                var newjsonquiz = JsonConvert.SerializeObject(newQuiz);
+
+                //session är helt körd och finns inte.
+                //this.HttpContext.Session.SetString("currentQuiz", newjsonquiz);
+            }
+            catch (Exception e)
+            {
+
+            }
+
         }
 
         [HttpPost]
@@ -59,10 +80,10 @@ namespace Agon.Controllers
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
-            
-            var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz,id);
 
-            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner,updatedQuiz._id,JsonConvert.SerializeObject(updatedQuiz));
+            var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
+
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz));
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
@@ -81,7 +102,7 @@ namespace Agon.Controllers
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
             var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
-            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner,quiz.Name))
+            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
             {
                 await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
             }
@@ -89,7 +110,7 @@ namespace Agon.Controllers
             {
                 await MongoManager.SaveDocumentAsync(jsonQuiz);
             }
-  
+
 
         }
     }

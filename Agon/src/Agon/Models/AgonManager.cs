@@ -44,7 +44,7 @@ namespace Agon.Models
             session.SetString("timestamp", timestamp);
         }
 
-        internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz,string id)
+        internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz, string id)
         {
             var updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
@@ -117,12 +117,36 @@ namespace Agon.Models
             }
             return quiz;
         }
+        public static async Task<Song> AddSongToQuiz(SpotifyTokens token, string href)
+        {
+            var newTrack = await SpotifyManager.GetOneSong(token, href);
+
+            var albumDate = await SpotifyManager.GetOneAlbum(token, newTrack.Album.Href);
+            StringBuilder builder = new StringBuilder();
+
+            foreach (var artist in newTrack.Artists)
+            {
+                builder.Append(artist.Name);
+                if (artist != newTrack.Artists[newTrack.Artists.Count - 1])
+                    builder.Append(", ");
+            }
+
+            var newSong = new Song
+            {
+                Artist = builder.ToString(),
+                Title = newTrack.Name,
+                RealeaseDate = albumDate,
+                AlbumTitle = newTrack.Album.Name,
+                SpotifyReferenceID = newTrack.Href
+            };
+            return newSong;
+        }
         public static EditSongVM CreateEditSongVM(string song)
         {
             var newSong = JsonConvert.DeserializeObject<Song>(song);
-            var editSongVM = new EditSongVM(newSong.Artist,newSong.Title,newSong.SpotifyReferenceID);
+            var editSongVM = new EditSongVM(newSong.Artist, newSong.Title, newSong.SpotifyReferenceID);
 
-            if(newSong.Questions.Count == 0)
+            if (newSong.Questions.Count == 0)
             {
                 editSongVM.Questions.Add(new Question { Text = "What is the name of the song?", CorrectAnswer = newSong.Title });
                 editSongVM.Questions.Add(new Question { Text = "What is the name of the artist?", CorrectAnswer = newSong.Artist });

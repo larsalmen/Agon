@@ -40,15 +40,15 @@ namespace Agon
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+            //services.AddCaching();
             services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseSession();
-
+            app.UseSession(new SessionOptions { CookieHttpOnly = false });
             //if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
             //else
             //    app.UseExceptionHandler("/Home/Error");
 
