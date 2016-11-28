@@ -14,6 +14,7 @@ namespace MongoUtils
         // All collections have indexes and constraints, see readme.
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
+        const string session = "session";
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -245,7 +246,7 @@ namespace MongoUtils
 
             return exists;
         }
-       
+
         /// <summary>
         /// Finds one quiz matching the "_id" filter in the specified collection and sets the pin to null.
         /// </summary>
@@ -260,7 +261,6 @@ namespace MongoUtils
 
             var filter = Builders<BsonDocument>.Filter.Eq("Pin", pin);
             var update = Builders<BsonDocument>.Update.Set("Pin", "running");
-            //var result = await col.FindOneAndUpdateAsync(filter, update);
 
 
             try
@@ -278,7 +278,7 @@ namespace MongoUtils
         /// <param name="pin"></param>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public static async Task<string>GetOneQuizByPinAsync(string pin, string collection)
+        public static async Task<string> GetOneQuizByPinAsync(string pin, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
@@ -294,6 +294,30 @@ namespace MongoUtils
 
                 throw ex;
             }
+
+            return quiz.ToJson();
+        }
+
+        public static async Task SaveQuizToSession(string input, string owner)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(session);
+            var sessionQuiz = BsonDocument.Parse(input);
+
+            if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
+                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}'}}", sessionQuiz);
+            else
+                await col.InsertOneAsync(sessionQuiz);
+        }
+
+        public static async Task<string>GetQuizFromSession(string owner)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(session);
+
+            BsonDocument quiz;
+            
+            quiz = await col.Find($"{{Owner: '{owner}' }}").FirstOrDefaultAsync();
 
             return quiz.ToJson();
         }
