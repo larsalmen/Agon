@@ -1,0 +1,13 @@
+﻿@model QuizMasterVM
+
+<h1>Your PIN is: @Model.Pin</h1>
+
+
+<b>Connected players: </b>
+<div id="connectedPlayers">
+    <i>Participants connecting...</i>
+</div>
+<br />
+<button name="Pin" value="@Model.Pin" class="btn btn-primary btn-lg" id="actuallyStartQuiz">Begin quiz</button><br />
+<label>When everyone has connected, start your quiz!</label>
+<script src="~/js/ActuallyStartQuiz.js"></script>

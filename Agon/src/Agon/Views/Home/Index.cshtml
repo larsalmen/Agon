@@ -3,12 +3,14 @@
         <button type="submit" class="btn btn-success btn-lg">Log in with Spotify</button>
     </form>
     <label>Log in with Spotify to create your quiz</label><br /><br />
-    <div class="input-group input-group-lg col-xs-2" style="margin-left:auto;margin-right:auto;min-width:200px;">
-        <input type="text" class="form-control" placeholder="Enter PIN">
-        <span class="input-group-btn">
-            <button class="btn btn-lg btn-primary" type="button">Go!</button>
-        </span>
-    </div><!-- /input-group -->
+    <form asp-controller="Quiz" asp-action="PlayQuiz" method="post">
+        <div class="input-group input-group-lg col-xs-2" style="margin-left:auto;margin-right:auto;min-width:200px;">
+            <input type="text" class="form-control" name="pin" placeholder="Enter PIN">
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-lg btn-primary">Go!</button>
+            </span>
+        </div><!-- /input-group -->
+    </form>
 </div>
 <!--<button class="btn btn-primary btn-lg">Enter PIN</button><br />-->
 <label>You have a PIN and want to join a quiz</label>

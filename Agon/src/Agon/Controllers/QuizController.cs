@@ -24,7 +24,7 @@ namespace Agon.Controllers
             var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
 
 
-            var currentQuiz = JsonConvert.SerializeObject(newQuiz, Formatting.Indented);
+            var currentQuiz = JsonConvert.SerializeObject(newQuiz);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
 
             return RedirectToAction("EditQuiz");
@@ -83,28 +83,45 @@ namespace Agon.Controllers
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
 
-            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz));
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
             HttpContext.Session.SetString("currentQuiz", currentQuiz);
 
             return RedirectToAction("EditQuiz", "Quiz");
         }
+        [HttpGet]
         public IActionResult EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
         {
-            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
-            var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+            if (HttpContext.Session.GetString("currentQuiz") != null && HttpContext.Session.GetString("currentQuiz") != "")
+            {
+                var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+                var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
-            return View(quizToEdit);
+                return View(quizToEdit);
+            }
+            else
+            {
+                return RedirectToAction("UserLoggedIn", "Home");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditQuiz(string _id)
+        {
+            var quiz = await MongoManager.GetOneQuizAsync(_id, "Quizzes");
+            HttpContext.Session.SetString("currentQuiz", quiz);
+
+            return RedirectToAction("EditQuiz");
         }
         public async Task SaveQuiz()
         {
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
             var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
-            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
+            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz);
+                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz, "Quizzes");
             }
             else
             {
@@ -112,6 +129,24 @@ namespace Agon.Controllers
             }
 
 
+        }
+
+        public async Task<IActionResult> StartQuiz(string _id)
+        {
+            QuizMasterVM quizMasterVM = await AgonManager.StartQuiz(_id);
+            return View(quizMasterVM);
+        }
+
+        
+        public async Task DropPin(string id)
+        {
+            await MongoManager.RemovePinFromQuiz(id, "runningQuizzes");
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult>PlayQuiz(string pin)
+        {
+            var quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+            return View(quizPlayerVM);
         }
     }
 }

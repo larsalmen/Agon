@@ -14,6 +14,7 @@ namespace MongoUtils
         // All collections have indexes and constraints, see readme.
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
+        const string session = "session";
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -67,21 +68,45 @@ namespace MongoUtils
         }
 
         /// <summary>
-        /// Finds one quiz from the quiz collection, based on the filter "Owner" and "Name". Serializes the response to a JSON string.
+        /// Finds one quiz from the specified (or default) collection, based on the filter "Owner" and "Name". Serializes the response to a JSON string.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="quizName"></param>
         /// <returns></returns>
-        public async static Task<string> GetOneQuizAsync(string owner, string quizName)
+        public async static Task<string> GetOneQuizAsync(string owner, string quizName, string collection = quizCollection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
+            var col = agony.GetCollection<BsonDocument>(collection);
 
             BsonDocument quiz;
 
             try
             {
-                quiz = await quizzes.Find($"{{ Owner: '{owner}', Name: '{quizName}' }}").FirstOrDefaultAsync();
+                quiz = await col.Find($"{{ Owner: '{owner}', Name: '{quizName}' }}").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return quiz.ToJson();
+        }
+        /// <summary>
+        /// Finds one quiz from the quiz collection, based on the filter "_id". Serializes the response to a JSON string.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <returns></returns>
+        public async static Task<string> GetOneQuizAsync(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            BsonDocument quiz;
+
+            try
+            {
+                quiz = await col.Find($"{{_id: '{_id}' }}").FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -125,16 +150,16 @@ namespace MongoUtils
         /// <param name="_id"></param>
         /// <param name="quizJson"></param>
         /// <returns></returns>
-        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson)
+        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
-            var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
+            var col = agony.GetCollection<BsonDocument>(collection);
 
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await quizzes.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
             }
             catch (Exception ex)
             {
@@ -149,10 +174,10 @@ namespace MongoUtils
         /// <param name="owner"></param>
         /// <param name="quizName"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckIfDocumentExistsAsync(string owner, string quizName)
+        public static async Task<bool> CheckIfDocumentExistsAsync(string owner, string quizName, string collection = quizCollection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
+            var quizzes = agony.GetCollection<BsonDocument>(collection);
             long count;
             bool exists = false;
             try
@@ -168,6 +193,133 @@ namespace MongoUtils
                 exists = true;
 
             return exists;
+        }
+        /// <summary>
+        /// Checks and returns true if any document in the specified collection exists that matches the filter "_id".
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckIfDocumentExistsAsync(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+            long count;
+            bool exists = false;
+            try
+            {
+                count = await col.Find($"{{_id: '{_id}'}}").CountAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            if (count > 0)
+                exists = true;
+
+            return exists;
+        }
+        /// <summary>
+        /// Checks and returns true if any document in the specified collection exists that matches the filter "pin".
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckIfPinExistsAsync(string pin, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+            long count;
+            bool exists = false;
+            try
+            {
+                count = await col.Find($"{{ Pin: '{pin}'}}").CountAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            if (count > 0)
+                exists = true;
+
+            return exists;
+        }
+
+        /// <summary>
+        /// Finds one quiz matching the "_id" filter in the specified collection and sets the pin to null.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task RemovePinFromQuiz(string pin, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            var filter = Builders<BsonDocument>.Filter.Eq("Pin", pin);
+            var update = Builders<BsonDocument>.Update.Set("Pin", "running");
+
+
+            try
+            {
+                await col.FindOneAndUpdateAsync(filter, update);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// Finds and returns a quiz as JSON string in the specified collection by "Pin" filter.
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task<string> GetOneQuizByPinAsync(string pin, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            BsonDocument quiz;
+
+            try
+            {
+                quiz = await col.Find($"{{Pin: '{pin}' }}").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return quiz.ToJson();
+        }
+
+        public static async Task SaveQuizToSession(string input, string owner)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(session);
+            var sessionQuiz = BsonDocument.Parse(input);
+
+            if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
+                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}'}}", sessionQuiz);
+            else
+                await col.InsertOneAsync(sessionQuiz);
+        }
+
+        public static async Task<string>GetQuizFromSession(string owner)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(session);
+
+            BsonDocument quiz;
+            
+            quiz = await col.Find($"{{Owner: '{owner}' }}").FirstOrDefaultAsync();
+
+            return quiz.ToJson();
         }
     }
 }

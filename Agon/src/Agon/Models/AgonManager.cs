@@ -15,6 +15,7 @@ namespace Agon.Models
 {
     public static class AgonManager
     {
+        static Random randomizer = new Random();
 
         public static SpotifyTokens GetSpotifyTokens(Controller controller)
         {
@@ -110,13 +111,40 @@ namespace Agon.Models
             }
 
             // This checks if a quiz exists, and if it does it does NOT try to save it.
-            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
+            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
                 var quizJson = JsonConvert.SerializeObject(quiz);
                 await MongoManager.SaveDocumentAsync(quizJson);
             }
             return quiz;
         }
+
+        public static async Task<QuizMasterVM> StartQuiz(string _id)
+        {
+            int pin;
+            // Hämta quiz från quizzes
+            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id, "Quizzes"));
+
+            // Fixa PIN som inte finns bland quizzar i runningQuizzes
+            do
+            {
+                pin = randomizer.Next(9999);
+            }
+            while (await MongoManager.CheckIfPinExistsAsync(pin.ToString(), "runningQuizzes"));
+
+            runningQuiz.Pin = pin.ToString();
+            // Stoppa ner quizzet med PIN i runningQuizzes
+            if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
+            {
+                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz._id, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
+            }
+            else
+                await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
+            // Generera QuizMasterVM och returnera
+
+            return new QuizMasterVM(runningQuiz);
+        }
+
         public static async Task<Song> AddSongToQuiz(SpotifyTokens token, string href)
         {
             var newTrack = await SpotifyManager.GetOneSong(token, href);
@@ -174,6 +202,12 @@ namespace Agon.Models
             var userVM = new UserVM(username, quizzes, loggedIn);
 
             return userVM;
+        }
+
+        public static async Task<QuizPlayerVM>CreateQuizPlayerVM(string pin)
+        {
+            var quizPlayerVM = new QuizPlayerVM(JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizByPinAsync(pin, "runningQuizzes")));
+            return quizPlayerVM;
         }
     }
 }
