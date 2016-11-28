@@ -91,6 +91,31 @@ namespace MongoUtils
 
             return quiz.ToJson();
         }
+        /// <summary>
+        /// Finds one quiz from the quiz collection, based on the filter "_id". Serializes the response to a JSON string.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="quizName"></param>
+        /// <returns></returns>
+        public async static Task<string> GetOneQuizAsync(string _id)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
+
+            BsonDocument quiz;
+
+            try
+            {
+                quiz = await quizzes.Find($"{{_id: '{_id}' }}").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return quiz.ToJson();
+        }
 
         /// <summary>
         /// Returns all quizzes based on the filter "Owner". Serializes the response to a JSON string.
