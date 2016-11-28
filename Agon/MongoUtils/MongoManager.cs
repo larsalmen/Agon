@@ -94,8 +94,7 @@ namespace MongoUtils
         /// <summary>
         /// Finds one quiz from the quiz collection, based on the filter "_id". Serializes the response to a JSON string.
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="quizName"></param>
+        /// <param name="_id"></param>
         /// <returns></returns>
         public async static Task<string> GetOneQuizAsync(string _id)
         {
@@ -195,12 +194,38 @@ namespace MongoUtils
             return exists;
         }
         /// <summary>
+        /// Checks and returns true if any document in the specified collection exists that matches the filter "_id".
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckIfDocumentExistsAsync(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+            long count;
+            bool exists = false;
+            try
+            {
+                count = await col.Find($"{{_id: '{_id}'}}").CountAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            if (count > 0)
+                exists = true;
+
+            return exists;
+        }
+        /// <summary>
         /// Checks and returns true if any document in the specified collection exists that matches the filter "pin".
         /// </summary>
         /// <param name="pin"></param>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckIfDocumentExistsAsync(string pin, string collection)
+        public static async Task<bool> CheckIfPinExistsAsync(string pin, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
@@ -220,5 +245,6 @@ namespace MongoUtils
 
             return exists;
         }
+       
     }
 }
