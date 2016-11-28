@@ -37,16 +37,19 @@ namespace SpotifyUtils
         public Album Album { get; set; }
         public List<Artist> Artists { get; set; }
         public string Href { get; set; }
-
+        public string PreviewUrl { get; set; }
 
         [JsonConstructor]
-        public Track(string name, List<Artist> artists, string href)
+        public Track(string name, List<Artist> artists, string href, string preview_url)
         {
             Name = name;
             Artists = artists;
             var temp = href.Substring(href.LastIndexOf("/") + 1);
             Href = temp;
-
+            if (preview_url == "" || preview_url == null)
+                PreviewUrl = @"https://p.scdn.co/mp3-preview/bd315ecee6f7f42f4c36f1c4ae8ab4a20c66bb90";
+            else
+                PreviewUrl = preview_url;
         }
     }
 
@@ -65,13 +68,15 @@ namespace SpotifyUtils
     {
         public string Name { get; set; }
         public string Href { get; set; }
+        public string PreviewUrl { get; set; }
 
         [JsonConstructor]
-        public Album(string name, string href)
+        public Album(string name, string href, string preview_url)
         {
             Name = name;
             var temp = href.Substring(href.LastIndexOf("/") + 1);
             Href = temp;
+            PreviewUrl = preview_url;
         }
     }
 }

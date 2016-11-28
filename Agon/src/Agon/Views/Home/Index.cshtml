@@ -3,9 +3,9 @@
         <button type="submit" class="btn btn-success btn-lg">Log in with Spotify</button>
     </form>
     <label>Log in with Spotify to create your quiz</label><br /><br />
-    <form asp-controller="Quiz" asp-action="PlayQuiz" method="post">
+    <form asp-controller="Quiz" asp-action="PlayQuiz" method="post" onsubmit="return PlayQuiz();">
         <div class="input-group input-group-lg col-xs-2" style="margin-left:auto;margin-right:auto;min-width:200px;">
-            <input type="text" class="form-control" name="pin" placeholder="Enter PIN">
+            <input type="text" class="form-control" name="pin" id="pin" placeholder="Enter PIN">
             <span class="input-group-btn">
                 <button type="submit" class="btn btn-lg btn-primary">Go!</button>
             </span>
@@ -14,3 +14,16 @@
 </div>
 <!--<button class="btn btn-primary btn-lg">Enter PIN</button><br />-->
 <label>You have a PIN and want to join a quiz</label>
+@*<script>
+    function PlayQuiz() {
+        $.ajax({
+            url: "/Quiz/CheckPin",
+            data: { 'pin': pin },
+            type: "POST",
+        }).done(function () {       //när anropet är klart gör följande.
+            if (true) {
+                
+            }
+        });
+    }
+</script>*@

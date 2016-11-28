@@ -5,10 +5,10 @@
     {
         @foreach (var question in song.Questions)
         {
-            <p>@question.Text</p><input asp-for="@question.Text" />
+            <p>@question.Text</p><input type="text"/>
 
-            
-            <input type="submit" value="Save" />
         }
     }
+    <br />
+    <input type="submit" value="Submit answers!" />
 </form>

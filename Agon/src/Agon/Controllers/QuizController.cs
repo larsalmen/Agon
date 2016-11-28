@@ -48,7 +48,7 @@ namespace Agon.Controllers
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
 
             var newSong = await Task.Run(async () => await AgonManager.AddSongToQuiz(token, href));
-            
+
             try
             {
                 var newQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
@@ -137,16 +137,29 @@ namespace Agon.Controllers
             return View(quizMasterVM);
         }
 
-        
+
         public async Task DropPin(string id)
         {
             await MongoManager.RemovePinFromQuiz(id, "runningQuizzes");
         }
         [AllowAnonymous]
-        public async Task<IActionResult>PlayQuiz(string pin)
+        public async Task<IActionResult> PlayQuiz(string pin)
         {
-            var quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
-            return View(quizPlayerVM);
+            QuizPlayerVM quizPlayerVM = null;
+            if (await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes"))
+            {
+                quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+                return View(quizPlayerVM);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        public async Task<bool> CheckPin(string pin)
+        {
+            return await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes");
         }
     }
 }

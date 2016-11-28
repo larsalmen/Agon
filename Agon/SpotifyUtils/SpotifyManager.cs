@@ -41,7 +41,7 @@ namespace SpotifyUtils
             // Checks if the accestoken has expired.
             CheckToken(token);
 
-            string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(artists,name,href,album(name,href)))";
+            string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(artists,name,href,preview_url,album(name,href)))";
 
             string text = await HttpRequest(token, endpoint);
 
