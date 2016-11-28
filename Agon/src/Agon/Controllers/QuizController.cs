@@ -88,7 +88,7 @@ namespace Agon.Controllers
         [HttpPost]
         public async Task<IActionResult> EditQuiz(string _id)
         {
-            var quiz = await MongoManager.GetOneQuizAsync(_id);
+            var quiz = await MongoManager.GetOneQuizAsync(_id, "Quizzes");
             HttpContext.Session.SetString("currentQuiz", quiz);
 
             return RedirectToAction("EditQuiz");
@@ -98,7 +98,7 @@ namespace Agon.Controllers
             var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
             var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
-            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
+            if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
                 await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz, "Quizzes");
             }
@@ -119,8 +119,13 @@ namespace Agon.Controllers
         
         public async Task DropPin(string id)
         {
-
             await MongoManager.RemovePinFromQuiz(id, "runningQuizzes");
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult>PlayQuiz(string pin)
+        {
+            var quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+            return View(quizPlayerVM);
         }
     }
 }

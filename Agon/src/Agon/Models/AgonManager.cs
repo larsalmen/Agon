@@ -111,7 +111,7 @@ namespace Agon.Models
             }
 
             // This checks if a quiz exists, and if it does it does NOT try to save it.
-            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name))
+            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
                 var quizJson = JsonConvert.SerializeObject(quiz);
                 await MongoManager.SaveDocumentAsync(quizJson);
@@ -123,7 +123,7 @@ namespace Agon.Models
         {
             int pin;
             // Hämta quiz från quizzes
-            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id));
+            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id, "Quizzes"));
 
             // Fixa PIN som inte finns bland quizzar i runningQuizzes
             do
@@ -180,6 +180,10 @@ namespace Agon.Models
             return userVM;
         }
 
-        //public static async Task<>
+        public static async Task<QuizPlayerVM>CreateQuizPlayerVM(string pin)
+        {
+            var quizPlayerVM = new QuizPlayerVM(JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizByPinAsync(pin, "runningQuizzes")));
+            return quizPlayerVM;
+        }
     }
 }
