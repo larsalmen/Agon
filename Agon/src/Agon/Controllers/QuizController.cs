@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using MongoUtils;
 
+
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Agon.Controllers
@@ -25,8 +26,7 @@ namespace Agon.Controllers
 
 
             var currentQuiz = JsonConvert.SerializeObject(newQuiz);
-            HttpContext.Session.SetString("currentQuiz", currentQuiz);
-
+            await MongoManager.SaveQuizToSession(currentQuiz, token.Username);
             return RedirectToAction("EditQuiz");
         }
 
@@ -39,33 +39,26 @@ namespace Agon.Controllers
         [HttpPost]
         public async void AddSingleSong(string href)
         {
-            //var session = HttpContext.Session;
-            //System.Web.SessionState
 
-            //this method is an ajax call from javascript SearchSpotifyForAlbumAndPlay30Sec.js
-            //the incoming variable href is the full href to a song (example: https://api.spotify.com/v1/tracks/0niC3Stpj4rX4Ul3udkbUO)
             var token = AgonManager.GetSpotifyTokens(this);
-            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var currentQuiz = await MongoManager.GetQuizFromSession(token.Username);
 
             var newSong = await Task.Run(async () => await AgonManager.AddSongToQuiz(token, href));
 
             try
             {
-                var newQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+                var newQuiz = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
                 newQuiz.Songs.Add(newSong);
 
-                var newjsonquiz = JsonConvert.SerializeObject(newQuiz);
+                var quizToStore = JsonConvert.SerializeObject(newQuiz);
 
-                //session är helt körd och finns inte.
-                //this.HttpContext.Session.SetString("currentQuiz", newjsonquiz);
+                await MongoManager.SaveQuizToSession(quizToStore, token.Username);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
+                throw;
             }
-
         }
-
         [HttpPost]
         public IActionResult EditSong(string id)
         {
@@ -79,23 +72,24 @@ namespace Agon.Controllers
         {
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
-            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
 
             await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
-            HttpContext.Session.SetString("currentQuiz", currentQuiz);
+            await MongoManager.SaveQuizToSession(currentQuiz, HttpContext.User.Identity.Name);
 
             return RedirectToAction("EditQuiz", "Quiz");
         }
         [HttpGet]
-        public IActionResult EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
+        public async Task<IActionResult> EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
         {
-            if (HttpContext.Session.GetString("currentQuiz") != null && HttpContext.Session.GetString("currentQuiz") != "")
+            var checkCurrentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
+            if (checkCurrentQuiz != null && checkCurrentQuiz != "")
             {
-                var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+                var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
                 var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
                 return View(quizToEdit);
@@ -110,13 +104,14 @@ namespace Agon.Controllers
         public async Task<IActionResult> EditQuiz(string _id)
         {
             var quiz = await MongoManager.GetOneQuizAsync(_id, "Quizzes");
-            HttpContext.Session.SetString("currentQuiz", quiz);
+            await MongoManager.SaveQuizToSession(quiz, HttpContext.User.Identity.Name);
+
 
             return RedirectToAction("EditQuiz");
         }
         public async Task SaveQuiz()
         {
-            var jsonQuiz = HttpContext.Session.GetString("currentQuiz");
+            var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
             var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
             if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))

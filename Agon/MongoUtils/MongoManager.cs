@@ -305,8 +305,8 @@ namespace MongoUtils
             var sessionQuiz = BsonDocument.Parse(input);
 
             if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
-                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}'}}", sessionQuiz);
-            else
+                await col.FindOneAndDeleteAsync($"{{ Owner: '{owner}'}}");
+            
                 await col.InsertOneAsync(sessionQuiz);
         }
 

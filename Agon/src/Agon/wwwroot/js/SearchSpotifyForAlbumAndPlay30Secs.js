@@ -64,32 +64,29 @@ results.addEventListener('click', function (e) {
 });
 
 
-$(document).ready(function () {
-    results.addEventListener('click', function (e) {
-        var clicked = e.target;
-        //var nilsVariabel = getsessionid('<%=Session.SessionID%>');
-        if (clicked !== null && clicked.id === 'add-single-song') {
-            var hrefAttribute = clicked.getAttribute("song-id");
-            clicked.children[0].classList.remove('glyphicon-plus');
-            clicked.children[0].classList.add('glyphicon-refresh');
-            //alert("Ajaxanrop görs nu till: /Quiz/AddSingleSong  med inparametern: \n" + hrefAttribute + "\n...vilket är hrefen till sången du klickade på.");
-            $.ajax({
-                url: "/Quiz/AddSingleSong",
-                data: { 'href': hrefAttribute },
-                type: "POST",
 
-                //,
-                //xhrFields: {
-                //    withCredentials: true
-                //}
-            }).done(function () {       //när anropet är klart gör följande.
-                clicked.children[0].classList.remove('glyphicon-refresh');
-                clicked.children[0].classList.add('glyphicon-ok');
-                clicked.children[1].innerHTML = "  Song added &nbsp&nbsp";  //2 spaces för att behålla storlektne
-            });
-        }
-    });
+results.addEventListener('click', function (e) {
+    var clicked = e.target;
+    if (clicked !== null && clicked.id === 'add-single-song') {
+        var hrefAttribute = clicked.getAttribute("song-id");
+        clicked.children[0].classList.remove('glyphicon-plus');
+        clicked.children[0].classList.add('glyphicon-refresh');
+
+        $.ajax({
+            url: "/Quiz/AddSingleSong",
+            data: { 'href': hrefAttribute },
+            type: "POST"
+
+
+        }).done(function () {       //när anropet är klart gör följande.
+            clicked.children[0].classList.remove('glyphicon-refresh');
+            clicked.children[0].classList.add('glyphicon-ok');
+            clicked.children[1].innerHTML = "  Song added &nbsp&nbsp";  //2 spaces för att behålla storlektne
+            clicked.id = 'has-been-clicked';
+        });
+    }
 });
+
 
 
 //var fetchTracks = function (albumId, callback) {
