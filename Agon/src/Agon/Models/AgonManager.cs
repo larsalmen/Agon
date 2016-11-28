@@ -15,6 +15,7 @@ namespace Agon.Models
 {
     public static class AgonManager
     {
+        static Random randomizer = new Random();
 
         public static SpotifyTokens GetSpotifyTokens(Controller controller)
         {
@@ -117,6 +118,28 @@ namespace Agon.Models
             }
             return quiz;
         }
+
+        public static async Task<QuizMasterVM> StartQuiz(string _id)
+        {
+            int pin;
+            // Hämta quiz från quizzes
+            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id));
+
+            // Fixa PIN som inte finns bland quizzar i runningQuizzes
+            do
+            {
+                pin = randomizer.Next(9999);
+            }
+            while (await MongoManager.CheckIfDocumentExistsAsync(pin.ToString(), "runningQuizzes"));
+
+            runningQuiz.Pin = pin;
+            // Stoppa ner quizzet med PIN i runningQuizzes
+            await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
+            // Generera QuizMasterVM och returnera
+
+            return new QuizMasterVM(runningQuiz);
+        }
+
         public static EditSongVM CreateEditSongVM(string song)
         {
             var newSong = JsonConvert.DeserializeObject<Song>(song);
@@ -151,5 +174,7 @@ namespace Agon.Models
 
             return userVM;
         }
+
+        //public static async Task<>
     }
 }

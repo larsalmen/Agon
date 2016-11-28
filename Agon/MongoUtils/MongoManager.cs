@@ -174,7 +174,7 @@ namespace MongoUtils
         /// <param name="owner"></param>
         /// <param name="quizName"></param>
         /// <returns></returns>
-        public static async Task<bool> CheckIfDocumentExistsAsync(string owner, string quizName)
+        public static async Task<bool> CheckIfDocumentExistsAsync(string owner, string quizName, string collection = databaseName)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
@@ -183,6 +183,32 @@ namespace MongoUtils
             try
             {
                 count = await quizzes.Find($"{{ Owner: '{owner}', Name: '{quizName}'}}").CountAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            if (count > 0)
+                exists = true;
+
+            return exists;
+        }
+        /// <summary>
+        /// Checks and returns true if any document in the specified collection exists that matches the filter "pin".
+        /// </summary>
+        /// <param name="pin"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task<bool> CheckIfDocumentExistsAsync(string pin, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+            long count;
+            bool exists = false;
+            try
+            {
+                count = await col.Find($"{{ Pin: '{pin}'}}").CountAsync();
             }
             catch (Exception ex)
             {
