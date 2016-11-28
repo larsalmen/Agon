@@ -246,5 +246,26 @@ namespace MongoUtils
             return exists;
         }
        
+        /// <summary>
+        /// Finds one quiz matching the "_id" filter in the specified collection and sets the pin to null.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task RemovePinFromQuiz(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            try
+            {
+                await col.FindOneAndUpdateAsync($"{{ _id: '{_id}'}}", "{ { Pin: undefined } }");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
