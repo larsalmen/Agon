@@ -147,10 +147,10 @@ namespace MongoUtils
         /// with the deserialized BSONDocument result of "quizJson".
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="_id"></param>
+        /// <param name="name"></param>
         /// <param name="quizJson"></param>
         /// <returns></returns>
-        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson, string collection)
+        public static async Task ReplaceOneQuizAsync(string owner, string name, string quizJson, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
@@ -159,7 +159,10 @@ namespace MongoUtils
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                if (await col.Find($"{{ Owner: '{owner}', Name: '{name}'}}").CountAsync() > 0)
+                    await col.FindOneAndDeleteAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
+
+                await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
             {

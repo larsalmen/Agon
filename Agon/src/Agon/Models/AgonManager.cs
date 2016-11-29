@@ -131,7 +131,7 @@ namespace Agon.Models
             // Stoppa ner quizzet med PIN i runningQuizzes
             if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz._id, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
+                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz.Name, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
             }
             else
                 await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));

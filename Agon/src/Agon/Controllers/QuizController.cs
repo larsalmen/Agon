@@ -81,7 +81,7 @@ namespace Agon.Controllers
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
 
-            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz.Name, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz);
             await MongoManager.SaveQuizToSession(currentQuiz, HttpContext.User.Identity.Name);
@@ -121,7 +121,7 @@ namespace Agon.Controllers
 
             if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz, "Quizzes");
+                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz.Name, jsonQuiz, "Quizzes");
             }
             else
             {
