@@ -15,8 +15,9 @@ namespace Agon.Models
             Owner = runningQuiz.Owner;
             Songs = runningQuiz.Songs;
         }
+        [Display(Name = "Team/Player name!")]
         [Required]
-        public string PlayerName { get; set; }
+        public string SubmitterName { get; set; }
 
     }
 }

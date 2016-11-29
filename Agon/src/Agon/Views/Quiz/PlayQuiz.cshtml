@@ -1,6 +1,10 @@
 ﻿@model QuizPlayerVM
 
-<form action="/Quiz/SubmitAnswer" method="post" id="submitAnswerForm">
+
+<form asp-controller="Quiz" asp-action="SubmitAnswer">
+    <label asp-for="SubmitterName"></label><br/>
+    <input asp-for="SubmitterName" />
+    <span asp-validation-for="SubmitterName"></span>
     @foreach (var song in Model.Songs)
     {
         @foreach (var question in song.Questions)

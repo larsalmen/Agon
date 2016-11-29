@@ -151,6 +151,16 @@ namespace Agon.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult SubmitAnswer(AnswerForm answerForm)
+        {
+            var playerName = answerForm.SubmitterName;
+
+
+
+            return View("SubmitAnswer",playerName);
+        }
 
         public async Task<bool> CheckPin(string pin)
         {
