@@ -1,0 +1,17 @@
+﻿@model Dictionary<string, int>
+
+
+<h1>The results are in!</h1>
+@{bool winner = true;}
+@foreach (var item in Model)
+{
+    if (winner)
+    {
+        <h1>@item.Key - @item.Value.ToString()</h1>
+        winner = false;
+    }
+    else
+    {
+        <h3>@item.Key - @item.Value.ToString()</h3>
+    }
+}

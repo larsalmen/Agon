@@ -188,6 +188,7 @@ namespace Agon.Models
         public static async Task<AnswerKeyVM> GetAnswerKeyVMAsync(string quizID)
         {
             AnswerKeyVM daBoss = new AnswerKeyVM();
+            daBoss.RunningQuizID = quizID;
 
             var runningQuizJson = await MongoManager.GetOneQuizAsync(quizID, "runningQuizzes");
             var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(runningQuizJson);
@@ -212,7 +213,7 @@ namespace Agon.Models
                     for (int k = 0; k < submittedAnswers.Count; k++)
                     {
                         answer = submittedAnswers[k].Answers[counter];
-                        answers.Add(new AnswerKeySubmittedAnswerVM { Answer = answer, SubmitterName = submittedAnswers[k].SubmitterName });
+                        answers.Add(new AnswerKeySubmittedAnswerVM { Answer = answer, SubmitterName = submittedAnswers[k].SubmitterName,IsCorrect = (answer.ToLower() == (runningQuiz.Songs[i].Questions[j].CorrectAnswer).ToLower()) });
                     }
                     var correctAnswer = runningQuiz.Songs[i].Questions[j].CorrectAnswer;
                     var text = runningQuiz.Songs[i].Questions[j].Text;

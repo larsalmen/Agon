@@ -178,8 +178,8 @@ namespace Agon.Controllers
             return await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes");
         }
 
-#warning Den här ska inte vara AllowAnonymous
-        [AllowAnonymous]
+
+
         [HttpGet]
         public async Task<IActionResult> Review(string quizID)
         {
@@ -187,12 +187,12 @@ namespace Agon.Controllers
             return View(viewModel);
         }
 
-#warning Den här ska inte vara AllowAnonymous
-        [AllowAnonymous]
+
+
         [HttpPost]
-        public async Task<Dictionary<string, int>> Review(FormCollection form)
+        public async Task<IActionResult> ActuallyReview(string runningQuizID)
         {
-            AnswerKeyVM viewModel = GetAnswerKey();
+            AnswerKeyVM viewModel = await AgonManager.GetAnswerKeyVMAsync(runningQuizID);
             var submittedAnswers = viewModel.Songs
                 .SelectMany(o => o.Questions.SelectMany(q => q.SubmittedAnswers))
                 .ToList();
@@ -221,44 +221,44 @@ namespace Agon.Controllers
                 }
             }
 
-            return results;
+            return View(results.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value));
         }
 
 
-        AnswerKeyVM GetAnswerKey()
-        {
-            return new AnswerKeyVM
-            {
-                Songs =
-                {
-                    new AnswerKeySongVM { Artist = "Aqua", Title = "Barbie Girl", Questions = {
-                            new AnswerKeyQuestionVM { Text = "Fråga 1 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 1 om Aqua - Barbie Girl", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
-                                } },
-                            new AnswerKeyQuestionVM { Text = "Fråga 2 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 2 om Aqua - Barbie Girl", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga", SubmitterName = "Pontus", IsCorrect = true },
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga B", SubmitterName = "Anders", IsCorrect = true }
-                                } },
-                            new AnswerKeyQuestionVM { Text = "Fråga 3 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 3 om Aqua - Barbie Girl", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Tre svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
-                                } }
-                        }
-                    },
-                    new AnswerKeySongVM { Artist = "Helloween", Title = "Helloweenlåten med stort H", Questions = {
-                            new AnswerKeyQuestionVM { Text = "Fråga 1 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
-                                } },
-                            new AnswerKeyQuestionVM { Text = "Fråga 2 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
-                                } },
-                            new AnswerKeyQuestionVM { Text = "Fråga 3 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-                                    new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Anders", IsCorrect = true }
-                                } }
-                        }
-                    }
-                }
-            };
-        }
+        //AnswerKeyVM GetAnswerKey()
+        //{
+        //    return new AnswerKeyVM
+        //    {
+        //        Songs =
+        //        {
+        //            new AnswerKeySongVM { Artist = "Aqua", Title = "Barbie Girl", Questions = {
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 1 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 1 om Aqua - Barbie Girl", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
+        //                        } },
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 2 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 2 om Aqua - Barbie Girl", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga", SubmitterName = "Pontus", IsCorrect = true },
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga B", SubmitterName = "Anders", IsCorrect = true }
+        //                        } },
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 3 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 3 om Aqua - Barbie Girl", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Tre svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
+        //                        } }
+        //                }
+        //            },
+        //            new AnswerKeySongVM { Artist = "Helloween", Title = "Helloweenlåten med stort H", Questions = {
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 1 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
+        //                        } },
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 2 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
+        //                        } },
+        //                    new AnswerKeyQuestionVM { Text = "Fråga 3 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
+        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Anders", IsCorrect = true }
+        //                        } }
+        //                }
+        //            }
+        //        }
+        //    };
+        //}
 
         public IActionResult CheckConnectedPlayers(string id)
         {

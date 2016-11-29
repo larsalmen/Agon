@@ -12,6 +12,7 @@ namespace Agon.Models
             Songs = new List<AnswerKeySongVM>();
         }
         public List<AnswerKeySongVM> Songs { get; set; }
+        public string RunningQuizID { get; set; }
     }
 
     public class AnswerKeySongVM
