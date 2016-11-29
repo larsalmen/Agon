@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Http;
 using MongoUtils;
 
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Agon.Controllers
 {
     [Authorize]
@@ -78,7 +76,7 @@ namespace Agon.Controllers
 
             await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
-            var currentQuiz = JsonConvert.SerializeObject(updatedQuiz, Formatting.Indented);
+            var currentQuiz = JsonConvert.SerializeObject(updatedQuiz);
             await MongoManager.SaveQuizToSession(currentQuiz, HttpContext.User.Identity.Name);
 
             return RedirectToAction("EditQuiz", "Quiz");
@@ -122,8 +120,6 @@ namespace Agon.Controllers
             {
                 await MongoManager.SaveDocumentAsync(jsonQuiz);
             }
-
-
         }
 
         public async Task<IActionResult> StartQuiz(string _id)
