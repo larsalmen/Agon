@@ -18,6 +18,6 @@ namespace Agon.Models
         [Display(Name = "Team/Player name!")]
         [Required]
         public string SubmitterName { get; set; }
-
+       
     }
 }

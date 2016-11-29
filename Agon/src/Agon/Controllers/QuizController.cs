@@ -149,13 +149,13 @@ namespace Agon.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult SubmitAnswer(AnswerForm answerForm)
+        public async Task<IActionResult> SubmitAnswer(string SubmitterName)
         {
-            var playerName = answerForm.SubmitterName;
+            var answers = Request.Form["answer"];
+            var id = Request.Form["runningQuizId"];
 
-
-
-            return View("SubmitAnswer",playerName);
+            await AgonManager.SaveAnswerAsync(answers, id, SubmitterName);
+            return View("SubmitAnswer", SubmitterName);
         }
 
         public async Task<bool> CheckPin(string pin)

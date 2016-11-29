@@ -19,6 +19,10 @@ namespace Agon.Models
 
         public string Timestamp { get; set; }
 
-
+        public AnswerForm()
+        {
+            _id = Guid.NewGuid().ToString();
+            Answers = new List<string>();
+        }
     }
 }
