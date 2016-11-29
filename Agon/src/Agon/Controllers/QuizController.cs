@@ -8,14 +8,18 @@ using Agon.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using MongoUtils;
-
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Agon.Controllers
 {
     [Authorize]
     public class QuizController : Controller
     {
-
+        IMemoryCache _memoryCache;
+        public QuizController(IMemoryCache memoryCache)
+        {
+            _memoryCache = memoryCache;
+        }
         [HttpPost]
         public async Task<IActionResult> Create(PlaylistVM viewModel)
         {
@@ -143,6 +147,15 @@ namespace Agon.Controllers
             if (await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes"))
             {
                 quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+                string cacheKey = pin;
+                int clientsConnected = _memoryCache.Get<Int32>(cacheKey);
+
+                if (clientsConnected == 0)
+                    _memoryCache.Set<Int32>(cacheKey, 1);
+
+                else
+                    _memoryCache.Set(cacheKey, clientsConnected + 1);
+
                 return View(quizPlayerVM);
             }
             else
@@ -164,6 +177,13 @@ namespace Agon.Controllers
         public async Task<bool> CheckPin(string pin)
         {
             return await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes");
+        }
+        public IActionResult CheckConnectedPlayers(string id)
+        {
+            string cacheKey = id;
+            var connectedPlayers = _memoryCache.Get(cacheKey);
+
+            return Json(new { connectedPlayers } );
         }
     }
 }

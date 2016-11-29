@@ -40,8 +40,8 @@ namespace Agon
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
-            //services.AddCaching();
             services.AddSession();
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

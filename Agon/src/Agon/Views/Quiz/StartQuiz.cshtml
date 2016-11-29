@@ -2,6 +2,7 @@
 <h1 id="pinHeadline">Your PIN is: @Model.Pin</h1>
 
 <b>Connected players: </b>
+<p id="clients"></p>
 <div id="connectedPlayers">
     <i>Participants connecting...</i>
 </div>
@@ -10,6 +11,7 @@
 <label id="startQuizInfo">When everyone has connected, start your quiz!</label>
 <script src="~/js/ActuallyStartQuiz.js"></script>
 <script src="~/js/PlayPreview.js"></script>
+<script src="~/js/PollConnectedPlayers.js"></script>
 <div id="actualQuiz" class="hiddenQuiz">
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
