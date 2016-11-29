@@ -39,3 +39,12 @@ body {
 .navbar{
     margin: 5px;
 }
+
+.hiddenQuiz{
+    font:bold;
+    display:none;
+}
+
+.song{
+    display:none;
+}

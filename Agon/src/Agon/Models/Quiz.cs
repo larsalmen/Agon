@@ -21,8 +21,6 @@ namespace Agon.Models
         public Quiz()
         {
             Songs = new List<Song>();
-
         }
-
     }
 }

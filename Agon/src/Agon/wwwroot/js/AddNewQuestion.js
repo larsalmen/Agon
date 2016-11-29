@@ -1,11 +1,18 @@
 ﻿document.getElementById('addField').addEventListener('click', function (e) {
     e.preventDefault();
     var id = parseInt(document.getElementById('addField').getAttribute('name'));
-    var string1 = "<br/><input name='item.Text' type='text'><input name='item.CorrectAnswer' "; 
-    var string2 = "id='Answer-"+ parseInt(id);
-    var string3 = "' type='text'>";
-    var newInput = string1 + string2 + string3;
-    $('input#Answer-' + (id - 1)).after(newInput);
+    var string = '<br /><div id="input-group-' + parseInt(id) + '" class="input-group" style="margin-left:auto;margin-right:auto;min-width:200px;max-width:400px;">';
+    string = string + '<span class="input-group-addon">';
+    string = string + '<input type="checkbox" aria-label="..." id="enableDisable' + parseInt(id) + '">';
+    string = string + '</span>';
+    string = string + '<input type="text" class="form-control" name="item.Text" id="Question-' + parseInt(id) + '">';
+    string = string + '<input type="text" class="form-control" name="item.CorrectAnswer" id="Answer-' + parseInt(id) + '">';
+    //string = string + "<input name='item.Text' type='text'><input name='item.CorrectAnswer' ";
+    //string = string + "id='Answer-" + parseInt(id);
+    //string = string + "' type='text'>";
+    string = string + '</div>';
+    var newInput = string;
+    $('div#input-group-' + (id - 1)).after(newInput);
     id = parseInt(1+id);
     document.getElementById('addField').setAttribute('name', id);
 
