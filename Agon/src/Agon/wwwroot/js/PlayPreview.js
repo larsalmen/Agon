@@ -3,7 +3,6 @@
 
 $(document).ready(function () {
     $("#playListener").click(function (e) {
-        var target = e.target;
         //////
         var playIcon = 'glyphicon-play';
         var pauseIcon = 'glyphicon-pause';

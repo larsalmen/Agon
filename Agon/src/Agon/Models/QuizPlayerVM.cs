@@ -16,7 +16,7 @@ namespace Agon.Models
             Songs = runningQuiz.Songs;
         }
         [Display(Name = "Team/Player name!")]
-        [Required]
+        [Required(ErrorMessage = "Please provide a Team/Player name!")]
         public string SubmitterName { get; set; }
        
     }
