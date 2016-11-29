@@ -1,0 +1,25 @@
+﻿@model AnswerKeyVM
+
+<h1>Review answers</h1>
+<form asp-controller="Quiz" asp-action="Review">
+    @{
+        int answerIndex = 0;
+    }
+    @for (int i = 0; i < Model.Songs.Count; i++)
+    {
+        <h3>@($"{Model.Songs[i].Artist} - {Model.Songs[i].Title}")</h3>
+
+        @foreach (var question in Model.Songs[i].Questions)
+        {
+            <b>@($"{question.Text} ({question.CorrectAnswer})")</b><br />
+            @foreach (var answer in question.SubmittedAnswers)
+            {
+                @($"{answer.SubmitterName}: {answer.Answer}") <input type="checkbox" checked="@answer.IsCorrect" name="@($"answer_{answerIndex}")" />
+                @(answerIndex++)
+                <br />
+            }
+            <br />
+        }
+    }
+    <input type="submit" value="Rätta svar" />
+</form>
