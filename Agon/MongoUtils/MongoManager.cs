@@ -14,7 +14,7 @@ namespace MongoUtils
         // All collections have indexes and constraints, see readme.
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
-        const string session = "session";
+        const string sessionCollection = "session";
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -194,6 +194,8 @@ namespace MongoUtils
 
             return exists;
         }
+        
+
         /// <summary>
         /// Checks and returns true if any document in the specified collection exists that matches the filter "_id".
         /// </summary>
@@ -301,7 +303,7 @@ namespace MongoUtils
         public static async Task SaveQuizToSession(string input, string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var col = agony.GetCollection<BsonDocument>(session);
+            var col = agony.GetCollection<BsonDocument>(sessionCollection);
             var sessionQuiz = BsonDocument.Parse(input);
 
             if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
@@ -313,7 +315,7 @@ namespace MongoUtils
         public static async Task<string>GetQuizFromSession(string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var col = agony.GetCollection<BsonDocument>(session);
+            var col = agony.GetCollection<BsonDocument>(sessionCollection);
 
             BsonDocument quiz;
             

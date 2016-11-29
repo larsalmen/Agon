@@ -13,10 +13,10 @@
     {
         @foreach (var question in song.Questions)
         {
-            <p>@question.Text</p><input type="text"/>
-
+            <p>@question.Text</p><input type="text" name="answer" />
         }
     }
     <br />
+    <input type="hidden" name="runningQuizId" value="@Model._id" />
     <input type="submit" value="Submit answers!" />
 </form>

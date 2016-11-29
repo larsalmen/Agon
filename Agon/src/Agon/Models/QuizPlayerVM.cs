@@ -18,6 +18,6 @@ namespace Agon.Models
         [Display(Name = "Team/Player name!")]
         [Required(ErrorMessage = "Please provide a Team/Player name!")]
         public string SubmitterName { get; set; }
-
+       
     }
 }

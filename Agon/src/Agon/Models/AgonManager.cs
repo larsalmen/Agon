@@ -164,6 +164,26 @@ namespace Agon.Models
             };
             return newSong;
         }
+
+        public static async Task SaveAnswerAsync(StringValues answers, string _id, string submitterName)
+        {
+            var answerForm = new AnswerForm();
+            foreach (var answer in answers)
+            {
+                answerForm.Answers.Add(answer);
+            }
+            answerForm.RunningQuizId = _id;
+            answerForm.SubmitterName = submitterName;
+            answerForm.Timestamp = DateTime.Now.ToString();
+
+            // Add cache-counter.
+
+            var jsonAnswer = JsonConvert.SerializeObject(answerForm);
+
+
+            await MongoManager.SaveDocumentAsync("answers", jsonAnswer);
+        }
+
         public static EditSongVM CreateEditSongVM(string song)
         {
             var newSong = JsonConvert.DeserializeObject<Song>(song);
