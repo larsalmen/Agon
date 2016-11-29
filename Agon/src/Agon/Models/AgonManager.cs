@@ -110,13 +110,6 @@ namespace Agon.Models
 
                 counter++;
             }
-
-            // This checks if a quiz exists, and if it does it does NOT try to save it.
-            if (!await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
-            {
-                var quizJson = JsonConvert.SerializeObject(quiz);
-                await MongoManager.SaveDocumentAsync(quizJson);
-            }
             return quiz;
         }
 
@@ -166,7 +159,8 @@ namespace Agon.Models
                 Title = newTrack.Name,
                 RealeaseDate = albumDate,
                 AlbumTitle = newTrack.Album.Name,
-                SpotifyReferenceID = newTrack.Href
+                SpotifyReferenceID = newTrack.Href,
+                PreviewUrl = newTrack.PreviewUrl
             };
             return newSong;
         }
@@ -205,7 +199,7 @@ namespace Agon.Models
             return userVM;
         }
 
-        public static async Task<QuizPlayerVM>CreateQuizPlayerVM(string pin)
+        public static async Task<QuizPlayerVM> CreateQuizPlayerVM(string pin)
         {
             var quizPlayerVM = new QuizPlayerVM(JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizByPinAsync(pin, "runningQuizzes")));
             return quizPlayerVM;
