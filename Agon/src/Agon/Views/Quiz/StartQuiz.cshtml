@@ -1,7 +1,8 @@
 ﻿@model QuizMasterVM
 <h1 id="pinHeadline">Your PIN is: @Model.Pin</h1>
 
-<b>Connected players: </b>
+<p>Connected players: <b id="clients"></b> </p>
+
 <div id="connectedPlayers">
     <i>Participants connecting...</i>
 </div>
@@ -10,28 +11,33 @@
 <label id="startQuizInfo">When everyone has connected, start your quiz!</label>
 <script src="~/js/ActuallyStartQuiz.js"></script>
 <script src="~/js/PlayPreview.js"></script>
+<script src="~/js/PollConnectedPlayers.js"></script>
 <div id="actualQuiz" class="hiddenQuiz">
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
     <div id="playListener">
         @for (int i = 0; i < Model.Songs.Count; i++)
         {
-            <div>
-                <button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
-                    <span class="glyphicon glyphicon-play"></span> Play
-                </button>
-            </div>
-            <div class="songPlaceholder" id="songPlaceholder@(i)">
-                <h2>Song @(i + 1) <a href="javascript:$('#songPlaceholder@(i)').hide();$('#song@(i)').show();">(Show answer)</a></h2>
-            </div>
-            <div class="song" id="song@(i)">
-                <h2>@Model.Songs[i].Artist - @Model.Songs[i].Title</h2>
-                @foreach (var question in Model.Songs[i].Questions)
+            <div class="jumbotron" style="border:solid">
+                <h2>
+                    Song @(i + 1) <button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
+                        <span class="glyphicon glyphicon-play"></span> Play
+                    </button>
+                </h2>
+
+                <div class="songPlaceholder" id="songPlaceholder@(i)">
+                    <button name="@(i)" class="btn showbutton">(Show answer)</button>
+                </div>
+                <div class="song" id="song@(i)">
+                    <h2>@Model.Songs[i].Artist - @Model.Songs[i].Title</h2>
+                    @foreach (var question in Model.Songs[i].Questions)
                 {
-                    <div><b>@question.Text</b></div>
-                    <div>@question.CorrectAnswer</div>
-                }
+                        <div><b>@question.Text</b></div>
+                        <div>@question.CorrectAnswer</div>
+                    }
+                </div>
             </div>
         }
     </div>
 </div>
+<script src="~/js/UnhideAnswers.js"></script>

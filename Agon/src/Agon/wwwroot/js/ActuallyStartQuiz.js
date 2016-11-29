@@ -7,5 +7,6 @@
         $('#startQuizInfo').hide("slow");
         $('#actuallyStartQuiz').hide("slow");
         $('#actualQuiz').show("slow");
+        clearInterval(refreshIntervalId);
     });
 });

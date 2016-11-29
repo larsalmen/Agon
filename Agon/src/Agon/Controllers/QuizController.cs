@@ -8,14 +8,18 @@ using Agon.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using MongoUtils;
-
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Agon.Controllers
 {
     [Authorize]
     public class QuizController : Controller
     {
-
+        IMemoryCache _memoryCache;
+        public QuizController(IMemoryCache memoryCache)
+        {
+            _memoryCache = memoryCache;
+        }
         [HttpPost]
         public async Task<IActionResult> Create(PlaylistVM viewModel)
         {
@@ -70,11 +74,13 @@ namespace Agon.Controllers
         {
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
+
+
             var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
 
-            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz._id, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
+            await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz.Name, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
             var currentQuiz = JsonConvert.SerializeObject(updatedQuiz);
             await MongoManager.SaveQuizToSession(currentQuiz, HttpContext.User.Identity.Name);
@@ -114,7 +120,7 @@ namespace Agon.Controllers
 
             if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz._id, jsonQuiz, "Quizzes");
+                await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz.Name, jsonQuiz, "Quizzes");
             }
             else
             {
@@ -140,6 +146,15 @@ namespace Agon.Controllers
             if (await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes"))
             {
                 quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+                string cacheKey = pin;
+                int clientsConnected = _memoryCache.Get<Int32>(cacheKey);
+
+                if (clientsConnected == 0)
+                    _memoryCache.Set<Int32>(cacheKey, 1);
+
+                else
+                    _memoryCache.Set(cacheKey, clientsConnected + 1);
+
                 return View(quizPlayerVM);
             }
             else
@@ -149,13 +164,13 @@ namespace Agon.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult SubmitAnswer(AnswerForm answerForm)
+        public async Task<IActionResult> SubmitAnswer(string SubmitterName)
         {
-            var playerName = answerForm.SubmitterName;
+            var answers = Request.Form["answer"];
+            var id = Request.Form["runningQuizId"];
 
-
-
-            return View("SubmitAnswer", playerName);
+            await AgonManager.SaveAnswerAsync(answers, id, SubmitterName);
+            return View("SubmitAnswer", SubmitterName);
         }
 
         public async Task<bool> CheckPin(string pin)
@@ -245,5 +260,12 @@ namespace Agon.Controllers
             };
         }
 
+        public IActionResult CheckConnectedPlayers(string id)
+        {
+            string cacheKey = id;
+            var connectedPlayers = _memoryCache.Get(cacheKey);
+
+            return Json(new { connectedPlayers } );
+        }
     }
 }

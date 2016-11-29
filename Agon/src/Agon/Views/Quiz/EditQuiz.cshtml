@@ -6,14 +6,14 @@
 {
     <form asp-controller="Quiz" asp-action="EditSong">
         <input type="hidden" name="id" value='@Json.Serialize(song)' />
-        <input type="submit" value="@song.Artist - @song.Title" />
+        <input type="submit" class="btn btn-default" value="@song.Artist - @song.Title" />
     </form>
 }
 <form asp-controller="Quiz" asp-action="StartQuiz">
     <input type="hidden" name="_id" value='@Model._id' />
-    <input type="submit" id="startQuizButton" disabled="disabled" value="Start quiz!" />
+    <input type="submit" id="startQuizButton" class="btn btn-primary" disabled="disabled" value="Start quiz!" />
 
 </form>
 <button class="btn btn-success" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus"></span>Add song</button>
-<button class="btn btn-primary" id="saveQuiz">Save quiz!</button>
+<button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk"></span>&nbspSave</button>
 <script src="~/js/SaveQuizAjax.js"></script>

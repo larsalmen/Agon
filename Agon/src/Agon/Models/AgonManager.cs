@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Agon.Models
 {
@@ -130,7 +131,7 @@ namespace Agon.Models
             // Stoppa ner quizzet med PIN i runningQuizzes
             if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz._id, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
+                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz.Name, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
             }
             else
                 await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
@@ -164,6 +165,26 @@ namespace Agon.Models
             };
             return newSong;
         }
+
+        public static async Task SaveAnswerAsync(StringValues answers, string _id, string submitterName)
+        {
+            var answerForm = new AnswerForm();
+            foreach (var answer in answers)
+            {
+                answerForm.Answers.Add(answer);
+            }
+            answerForm.RunningQuizId = _id;
+            answerForm.SubmitterName = submitterName;
+            answerForm.Timestamp = DateTime.Now.ToString();
+
+            // Add cache-counter.
+
+            var jsonAnswer = JsonConvert.SerializeObject(answerForm);
+
+
+            await MongoManager.SaveDocumentAsync("answers", jsonAnswer);
+        }
+
         public static EditSongVM CreateEditSongVM(string song)
         {
             var newSong = JsonConvert.DeserializeObject<Song>(song);

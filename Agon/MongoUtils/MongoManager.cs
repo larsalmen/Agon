@@ -14,7 +14,7 @@ namespace MongoUtils
         // All collections have indexes and constraints, see readme.
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
-        const string session = "session";
+        const string sessionCollection = "session";
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -147,10 +147,10 @@ namespace MongoUtils
         /// with the deserialized BSONDocument result of "quizJson".
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="_id"></param>
+        /// <param name="name"></param>
         /// <param name="quizJson"></param>
         /// <returns></returns>
-        public static async Task ReplaceOneQuizAsync(string owner, string _id, string quizJson, string collection)
+        public static async Task ReplaceOneQuizAsync(string owner, string name, string quizJson, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
 
@@ -159,7 +159,11 @@ namespace MongoUtils
             var quiz = BsonDocument.Parse(quizJson);
             try
             {
-                await col.FindOneAndReplaceAsync($"{{ Owner: '{owner}', _id: '{_id}'}}", quiz);
+                if (await col.Find($"{{ Owner: '{owner}', Name: '{name}'}}").CountAsync() > 0)
+                    await col.DeleteOneAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
+                
+                
+                await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
             {
@@ -194,6 +198,8 @@ namespace MongoUtils
 
             return exists;
         }
+        
+
         /// <summary>
         /// Checks and returns true if any document in the specified collection exists that matches the filter "_id".
         /// </summary>
@@ -301,19 +307,19 @@ namespace MongoUtils
         public static async Task SaveQuizToSession(string input, string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var col = agony.GetCollection<BsonDocument>(session);
+            var col = agony.GetCollection<BsonDocument>(sessionCollection);
             var sessionQuiz = BsonDocument.Parse(input);
 
             if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
-                await col.FindOneAndDeleteAsync($"{{ Owner: '{owner}'}}");
-            
+                await col.DeleteOneAsync($"{{ Owner: '{owner}'}}");
+
                 await col.InsertOneAsync(sessionQuiz);
         }
 
         public static async Task<string>GetQuizFromSession(string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-            var col = agony.GetCollection<BsonDocument>(session);
+            var col = agony.GetCollection<BsonDocument>(sessionCollection);
 
             BsonDocument quiz;
             

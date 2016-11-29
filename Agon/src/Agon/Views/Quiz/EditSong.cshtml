@@ -3,18 +3,21 @@
 <div class="container-full">
     <div class="list-group">
         <form action="/Quiz/UpdateQuestions" method="post" id="editSongForm">
-            <div class="col-md-12">
+            <div class="col-md-12" id="formDiv">
                 @{ int counter = 0;}
                 @for (int i = 0; i < Model.Questions.Count; i++)
                 {
-                    <br />
-                    <div id="input-group-@(counter)" class="input-group" style="margin-left:auto;margin-right:auto;min-width:200px;max-width:400px;">
+                    <div id="input-group-@(counter)" class="input-group" style="margin-left:auto;margin-right:auto;min-width:200px;max-width:400px;padding-bottom:20px;">
+                        @*<br />*@
                         <span class="input-group-addon">
-                            <input type="checkbox" aria-label="..." id="enableDisable@(i)">
+                            <button type="button" aria-label="..." name="@counter" id="@counter" class="removeRow btn btn-danger">
+                                <span class="glyphicon glyphicon-trash"></span>&nbspRemove
+                            </button>
                         </span>
                         <input type="text" class="form-control" name="item.Text" id="Question-@counter" value="@Model.Questions[i].Text">
-                        <input type="text" class="form-control" name="item.CorrectAnswer" value="@Model.Questions[i].CorrectAnswer" id="Answer-@(counter++)">
+                        <input type="text" class="form-control" name="item.CorrectAnswer" value="@Model.Questions[i].CorrectAnswer" id="Answer-@(counter)">
                     </div>
+                    <div id="divCounter-@(counter++)" style="display:none;"></div>
                 }
             </div>
             @*@{ counter = 0;}
@@ -25,8 +28,8 @@
 
                 }*@
             <input type="hidden" value="@Model.SpotifyReferenceID" name="id" />
-            <button id="addField" name="@counter">Add new question</button>
-            <input type="submit" value="Save" />
+            <button id="addField" class="btn btn-primary" name="@counter">Add new question</button>
+            <input type="submit" class="btn btn-success" value="Save" />
         </form>
     </div>
 </div>
