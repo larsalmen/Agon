@@ -329,7 +329,7 @@ namespace MongoUtils
 
             return quiz.ToJson();
         }
-        public static async Task<string>GetAllAnswerFormsAsync(string id, string collection)
+        public static async Task<string>GetAllAnswerFormsAsync(string runningQuizId, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
@@ -337,7 +337,7 @@ namespace MongoUtils
             List<BsonDocument> ListOfAnswerForms = new List<BsonDocument>();
             try
             {
-                ListOfAnswerForms = await col.Find($"{{ _id: '{id}'}}").ToListAsync();
+                ListOfAnswerForms = await col.Find($"{{ RunningQuizId: '{runningQuizId}'}}").ToListAsync();
             }
             catch (Exception ex)
             {

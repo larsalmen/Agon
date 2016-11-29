@@ -185,6 +185,51 @@ namespace Agon.Models
             await MongoManager.SaveDocumentAsync("answers", jsonAnswer);
         }
 
+        public static async Task<AnswerKeyVM> GetAnswerKeyVMAsync(string quizID)
+        {
+            AnswerKeyVM daBoss = new AnswerKeyVM();
+
+            var runningQuizJson = await MongoManager.GetOneQuizAsync(quizID, "runningQuizzes");
+            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(runningQuizJson);
+
+            var submittedAnswersJson = await MongoManager.GetAllAnswerFormsAsync(quizID, "answers");
+            var submittedAnswers = JsonConvert.DeserializeObject<List<AnswerForm>>(submittedAnswersJson);
+
+            // Stoppa in allt på rätt sätt i rätt AKVM
+
+            var answerkeySongs = new List<AnswerKeySongVM>();
+
+
+            int counter = 0;
+            for (int i = 0; i < runningQuiz.Songs.Count; i++)
+            {
+                var questions = new List<AnswerKeyQuestionVM>();
+                for (int j = 0; j < runningQuiz.Songs[i].Questions.Count; j++)
+                {
+                    var answers = new List<AnswerKeySubmittedAnswerVM>();
+                    string answer = "";
+
+                    for (int k = 0; k < submittedAnswers.Count; k++)
+                    {
+                        answer = submittedAnswers[k].Answers[counter];
+                        answers.Add(new AnswerKeySubmittedAnswerVM { Answer = answer, SubmitterName = submittedAnswers[k].SubmitterName });
+                    }
+                    var correctAnswer = runningQuiz.Songs[i].Questions[j].CorrectAnswer;
+                    var text = runningQuiz.Songs[i].Questions[j].Text;
+                    questions.Add(new AnswerKeyQuestionVM { CorrectAnswer = correctAnswer, Text = text, SubmittedAnswers = new List<AnswerKeySubmittedAnswerVM>() });
+                    questions[j].SubmittedAnswers.AddRange(answers);
+                    counter++;
+                }
+                var artist = runningQuiz.Songs[i].Artist;
+                var title = runningQuiz.Songs[i].Title;
+                answerkeySongs.Add(new AnswerKeySongVM { Artist = artist, Title = title, Questions = new List<AnswerKeyQuestionVM>() });
+                answerkeySongs[i].Questions.AddRange(questions);
+            }
+
+            daBoss.Songs.AddRange(answerkeySongs);
+            return daBoss;
+        }
+
         public static EditSongVM CreateEditSongVM(string song)
         {
             var newSong = JsonConvert.DeserializeObject<Song>(song);

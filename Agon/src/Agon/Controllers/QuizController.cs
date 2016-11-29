@@ -181,9 +181,9 @@ namespace Agon.Controllers
 #warning Den här ska inte vara AllowAnonymous
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Review()
+        public async Task<IActionResult> Review(string quizID)
         {
-            AnswerKeyVM viewModel = GetAnswerKey();
+            AnswerKeyVM viewModel = await AgonManager.GetAnswerKeyVMAsync(quizID);
             return View(viewModel);
         }
 
