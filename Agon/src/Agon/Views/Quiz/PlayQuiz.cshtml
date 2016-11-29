@@ -6,17 +6,20 @@
 <script src="http://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 
 <form asp-controller="Quiz" asp-action="SubmitAnswer">
-    <label asp-for="SubmitterName"></label><br />
+    <label asp-for="SubmitterName"></label>
     <span asp-validation-for="SubmitterName"></span><br />
-    <input asp-for="SubmitterName" />
-
+    <input asp-for="SubmitterName" placeholder="Namn"/>
+    <br />
     @for (int i = 0; i < Model.Songs.Count; i++)
     {
-        <h2>Frågor till låt @(i + 1)</h2>
-        @foreach (var question in Model.Songs[i].Questions)
-        {
-            <p>@question.Text</p><input type="text" name="answer" />
-        }
+        <div class="jumbotron" style="border:solid">
+            <h2>Frågor till låt @(i + 1)</h2>
+            @foreach (var question in Model.Songs[i].Questions)
+            {
+                <p>@question.Text</p>
+                <input type="text" class="form-control" name="answer" />
+            }
+        </div>
     }
     <br />
     <input type="hidden" name="runningQuizId" value="@Model._id" />

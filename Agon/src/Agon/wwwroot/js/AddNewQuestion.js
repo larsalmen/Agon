@@ -5,7 +5,7 @@ $(document).ready(function () {
         id = parseInt(document.getElementById('addField').getAttribute('name'));
         var string = '<div id="input-group-' + parseInt(id) + '" class="input-group" style="margin-left:auto;margin-right:auto;min-width:200px;max-width:400px;padding-bottom:20px">';
         string = string + '<span class="input-group-addon">';
-        string = string + '<input type="button" aria-label="..."name="' + parseInt(id) + '" id="' + parseInt(id) + '" class="removeRow" value="Remove">';
+        string = string + '<button type="button" aria-label="..."name="' + parseInt(id) + '" id="' + parseInt(id) + '" class="removeRow btn btn-danger" value="Remove"><span class="glyphicon glyphicon-trash"></span>&nbspRemove</button>';
         string = string + '</span>';
         string = string + '<input type="text" class="form-control" name="item.Text" id="Question-' + parseInt(id) + '">';
         string = string + '<input type="text" class="form-control" name="item.CorrectAnswer" id="Answer-' + parseInt(id) + '">';
