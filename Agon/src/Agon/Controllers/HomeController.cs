@@ -27,7 +27,7 @@ namespace Agon.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated && HttpContext.Session.GetString("access_token") != null)
             {
                 return RedirectToAction(nameof(UserLoggedIn));
             }

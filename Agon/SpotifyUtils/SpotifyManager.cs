@@ -103,6 +103,7 @@ namespace SpotifyUtils
         }
         private static void CheckToken(SpotifyTokens token)
         {
+         
             // Parses the timestamp to Datetime, adds expiration time (3600 seconds isch) and checks if that time has passed.
             if (DateTime.Parse(token.Timestamp).AddSeconds(3540) < DateTime.Now)
             {
