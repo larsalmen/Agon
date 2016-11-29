@@ -1,7 +1,5 @@
 ﻿@model QuizMasterVM
-
 <h1 id="pinHeadline">Your PIN is: @Model.Pin</h1>
-
 
 <b>Connected players: </b>
 <div id="connectedPlayers">
@@ -11,15 +9,15 @@
 <button name="Pin" value="@Model.Pin" class="btn btn-primary btn-lg" id="actuallyStartQuiz">Begin quiz</button><br />
 <label id="startQuizInfo">When everyone has connected, start your quiz!</label>
 <script src="~/js/ActuallyStartQuiz.js"></script>
-<script src="~/js/SearchSpotifyForAlbumAndPlay30Secs.js"></script>
+<script src="~/js/PlayPreview.js"></script>
 <div id="actualQuiz" class="hiddenQuiz">
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
-
+    <div id="playListener">
         @for (int i = 0; i < Model.Songs.Count; i++)
         {
             <div>
-                <button type="button" class="btn btn-primary play-button" preview-url="@Model.Songs[i].PreviewUrl"> @*@Model.Songs[i]*@
+                <button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
                     <span class="glyphicon glyphicon-play"></span> Play
                 </button>
             </div>
@@ -35,4 +33,5 @@
                 }
             </div>
         }
+    </div>
 </div>

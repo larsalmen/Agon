@@ -70,6 +70,9 @@ namespace Agon.Controllers
         {
             var questionText = Request.Form["item.Text"];
             var answerText = Request.Form["item.CorrectAnswer"];
+            var checkBox = Request.Form["item.Checkbox"];
+
+
             var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
 
             var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
