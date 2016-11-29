@@ -161,8 +161,9 @@ namespace MongoUtils
             {
                 if (await col.Find($"{{ Owner: '{owner}', Name: '{name}'}}").CountAsync() > 0)
                     await col.DeleteOneAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
-                
-                
+
+                await Task.Delay(1000);
+
                 await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
@@ -198,7 +199,7 @@ namespace MongoUtils
 
             return exists;
         }
-        
+
 
         /// <summary>
         /// Checks and returns true if any document in the specified collection exists that matches the filter "_id".
@@ -313,19 +314,38 @@ namespace MongoUtils
             if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
                 await col.DeleteOneAsync($"{{ Owner: '{owner}'}}");
 
-                await col.InsertOneAsync(sessionQuiz);
+            await Task.Delay(1000);
+            await col.InsertOneAsync(sessionQuiz);
         }
 
-        public static async Task<string>GetQuizFromSession(string owner)
+        public static async Task<string> GetQuizFromSession(string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(sessionCollection);
 
             BsonDocument quiz;
-            
+
             quiz = await col.Find($"{{Owner: '{owner}' }}").FirstOrDefaultAsync();
 
             return quiz.ToJson();
+        }
+        public static async Task<string>GetAllAnswerFormsAsync(string id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            List<BsonDocument> ListOfAnswerForms = new List<BsonDocument>();
+            try
+            {
+                ListOfAnswerForms = await col.Find($"{{ _id: '{id}'}}").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return ListOfAnswerForms.ToArray().ToJson();
         }
     }
 }
