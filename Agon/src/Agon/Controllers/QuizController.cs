@@ -220,7 +220,7 @@ namespace Agon.Controllers
                         results[name] = results[name] + 1;
                 }
             }
-
+            //Remove stuff from DB - maybe store highscore typ
             return View(results.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value));
         }
 
