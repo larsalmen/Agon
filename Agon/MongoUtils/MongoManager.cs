@@ -160,8 +160,9 @@ namespace MongoUtils
             try
             {
                 if (await col.Find($"{{ Owner: '{owner}', Name: '{name}'}}").CountAsync() > 0)
-                    await col.FindOneAndDeleteAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
-
+                    await col.DeleteOneAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
+                
+                
                 await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
@@ -310,8 +311,8 @@ namespace MongoUtils
             var sessionQuiz = BsonDocument.Parse(input);
 
             if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
-                await col.FindOneAndDeleteAsync($"{{ Owner: '{owner}'}}");
-            
+                await col.DeleteOneAsync($"{{ Owner: '{owner}'}}");
+
                 await col.InsertOneAsync(sessionQuiz);
         }
 

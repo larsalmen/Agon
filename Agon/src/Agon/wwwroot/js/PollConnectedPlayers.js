@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿var refreshIntervalId;
+
+$(document).ready(function () {
     var pin = $("#actuallyStartQuiz").val();
     var pollPlayerCount = function () {
         $.ajax({
@@ -6,12 +8,11 @@
             type: 'GET',
             success: function (value) {
                 $("#clients").html(value.connectedPlayers);
-                console.log("set connected players to" + value.connectedPlayers);
             }
         });
     };
 
-    var interval = 1000 * 5; // where X is your every X minutes clients
+    var interval = 1000 * 5;
 
-    setInterval(pollPlayerCount, interval);
+    refreshIntervalId = setInterval(pollPlayerCount, interval);
 });
