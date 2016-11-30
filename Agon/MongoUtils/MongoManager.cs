@@ -35,14 +35,14 @@ namespace MongoUtils
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(quizCollection);
 
-            var quiz = BsonDocument.Parse(input);
             try
             {
+                var quiz = BsonDocument.Parse(input);
                 await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new MongoException("MongoManager:SaveDocumentAsync. Insert failed.", ex.InnerException);
             }
         }
         /// <summary>
@@ -56,14 +56,14 @@ namespace MongoUtils
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
 
-            var quiz = BsonDocument.Parse(input);
             try
             {
+                var quiz = BsonDocument.Parse(input);
                 await col.InsertOneAsync(quiz);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new MongoException("MongoManager:SaveDocumentAsync. Insert failed.", ex.InnerException);
             }
         }
 
@@ -83,14 +83,13 @@ namespace MongoUtils
             try
             {
                 quiz = await col.Find($"{{ Owner: '{owner}', Name: '{quizName}' }}").FirstOrDefaultAsync();
+                return quiz.ToJson();
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:GetOneAsync. Single document retrieval failed.", ex.InnerException);
             }
 
-            return quiz.ToJson();
         }
         /// <summary>
         /// Finds one quiz from the quiz collection, based on the filter "_id". Serializes the response to a JSON string.
@@ -107,14 +106,13 @@ namespace MongoUtils
             try
             {
                 quiz = await col.Find($"{{_id: '{_id}' }}").FirstOrDefaultAsync();
+                return quiz.ToJson();
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:GetOneAsync. Single document retrieval failed.", ex.InnerException);
             }
 
-            return quiz.ToJson();
         }
 
         /// <summary>
@@ -125,21 +123,19 @@ namespace MongoUtils
         public static async Task<string> GetAllQuizzesAsync(string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
-
             var quizzes = agony.GetCollection<BsonDocument>(quizCollection);
 
             List<BsonDocument> listOfQuizzes = new List<BsonDocument>();
             try
             {
                 listOfQuizzes = await quizzes.Find($"{{ Owner: '{owner}'}}").ToListAsync();
+                return listOfQuizzes.ToArray().ToJson();
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:GetOneAsync. Multiple document retrieval failed.", ex.InnerException);
             }
 
-            return listOfQuizzes.ToArray().ToJson();
         }
 
         /// <summary>
@@ -156,9 +152,9 @@ namespace MongoUtils
 
             var col = agony.GetCollection<BsonDocument>(collection);
 
-            var quiz = BsonDocument.Parse(quizJson);
             try
             {
+                var quiz = BsonDocument.Parse(quizJson);
                 if (await col.Find($"{{ Owner: '{owner}', Name: '{name}'}}").CountAsync() > 0)
                     await col.DeleteOneAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
 
@@ -168,9 +164,8 @@ namespace MongoUtils
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new MongoException("MongoManager:ReplaceOneQuizAsync. Document replacement failed.", ex.InnerException);
             }
-
         }
 
         /// <summary>
@@ -191,8 +186,7 @@ namespace MongoUtils
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:CheckIfDocumentExistsAsync. Check for document failed.", ex.InnerException);
             }
             if (count > 0)
                 exists = true;
@@ -219,8 +213,7 @@ namespace MongoUtils
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:CheckIfDocumentExistsAsync. Check for document failed.", ex.InnerException);
             }
             if (count > 0)
                 exists = true;
@@ -245,8 +238,7 @@ namespace MongoUtils
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:CheckIfPinExistsAsync. Check for document failed.", ex.InnerException);
             }
             if (count > 0)
                 exists = true;
@@ -268,15 +260,13 @@ namespace MongoUtils
 
             var filter = Builders<BsonDocument>.Filter.Eq("Pin", pin);
             var update = Builders<BsonDocument>.Update.Set("Pin", "running");
-
-
             try
             {
                 await col.FindOneAndUpdateAsync(filter, update);
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new MongoException("MongoManager:RemovePinFromQuiz. Pin removal failed.", ex.InnerException);
             }
         }
         /// <summary>
@@ -290,46 +280,55 @@ namespace MongoUtils
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
 
-            BsonDocument quiz;
 
             try
             {
-                quiz = await col.Find($"{{Pin: '{pin}' }}").FirstOrDefaultAsync();
+                var quiz = await col.Find($"{{Pin: '{pin}' }}").FirstOrDefaultAsync();
+                return quiz.ToJson();
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:GetOneQuizByPinAsync. Single document retrieval failed.", ex.InnerException);
             }
 
-            return quiz.ToJson();
         }
 
         public static async Task SaveQuizToSession(string input, string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(sessionCollection);
-            var sessionQuiz = BsonDocument.Parse(input);
 
-            if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
-                await col.DeleteOneAsync($"{{ Owner: '{owner}'}}");
+            try
+            {
+                var sessionQuiz = BsonDocument.Parse(input);
 
-            await Task.Delay(1000);
-            await col.InsertOneAsync(sessionQuiz);
+                if (await col.Find($"{{Owner: '{owner}'}}").CountAsync() > 0)
+                    await col.DeleteOneAsync($"{{ Owner: '{owner}'}}");
+
+                await Task.Delay(1000);
+                await col.InsertOneAsync(sessionQuiz);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:SaveQuizToSession. Saving to session storage failed.", ex.InnerException);
+            }
         }
 
         public static async Task<string> GetQuizFromSession(string owner)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(sessionCollection);
-
-            BsonDocument quiz;
-
-            quiz = await col.Find($"{{Owner: '{owner}' }}").FirstOrDefaultAsync();
-
-            return quiz.ToJson();
+            try
+            {
+                var quiz = await col.Find($"{{Owner: '{owner}' }}").FirstOrDefaultAsync();
+                return quiz.ToJson();
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:GetQuizFromSession. Retrieving from session storage failed.", ex.InnerException);
+            }
         }
-        public static async Task<string>GetAllAnswerFormsAsync(string runningQuizId, string collection)
+        public static async Task<string> GetAllAnswerFormsAsync(string runningQuizId, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
             var col = agony.GetCollection<BsonDocument>(collection);
@@ -338,14 +337,13 @@ namespace MongoUtils
             try
             {
                 ListOfAnswerForms = await col.Find($"{{ RunningQuizId: '{runningQuizId}'}}").ToListAsync();
+                return ListOfAnswerForms.ToArray().ToJson();
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new MongoException("MongoManager:GetAllAnswerFormsAsync. Retrieving answers failed.", ex.InnerException);
             }
 
-            return ListOfAnswerForms.ToArray().ToJson();
         }
     }
 }

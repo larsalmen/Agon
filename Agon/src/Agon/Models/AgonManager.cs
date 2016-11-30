@@ -44,30 +44,26 @@ namespace Agon.Models
             session.SetString("timestamp", timestamp);
         }
 
-        public static async void RemoveSongFromQuiz(SpotifyTokens token, int indexToRemove)
+        public static async Task RemoveSongFromQuiz(SpotifyTokens token, int indexToRemove)
         {
-            var currentQuizJson = await MongoManager.GetQuizFromSession(token.Username);
-            var currentQuiz = JsonConvert.DeserializeObject<Quiz>(currentQuizJson);
+            string currentQuizJson;
+            Quiz currentQuiz;
+
+            currentQuizJson = await MongoManager.GetQuizFromSession(token.Username);
+            currentQuiz = JsonConvert.DeserializeObject<Quiz>(currentQuizJson);
 
             currentQuiz.Songs.RemoveAt(indexToRemove);
 
             currentQuizJson = JsonConvert.SerializeObject(currentQuiz);
-
             await MongoManager.SaveQuizToSession(currentQuizJson, token.Username);
+
 
         }
 
         internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz, string id)
         {
             Quiz updatedQuiz;
-            try
-            {
-                updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("AgonManager:UpdateQuestions, failed to deserializeObject<Quiz>", ex.InnerException);
-            }
+            updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
 
             var song = updatedQuiz.Songs.Where(s => s.SpotifyReferenceID == id).FirstOrDefault();
 
@@ -84,22 +80,9 @@ namespace Agon.Models
         public static async Task<List<PlaylistVM>> GetPlaylists(SpotifyTokens token)
         {
             ListOfPlaylists allReturnedPlaylists;
-            try
-            {
-                allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
-            }
-            catch (HttpException HttpEX)
-            {
-                throw HttpEX;
-            }
-            catch (SpotifyException SpotifyEX)
-            {
-                throw SpotifyEX;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("AgonManager:GetPlaylists", ex.InnerException);
-            }
+
+            allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
+
             var playlists = new List<PlaylistVM>();
 
             foreach (var item in allReturnedPlaylists.Items)
@@ -112,22 +95,9 @@ namespace Agon.Models
         public static async Task<Quiz> GenerateQuiz(SpotifyTokens token, PlaylistVM viewModel)
         {
             ListOfSongs allReturnedSongs;
-            try
-            {
-                allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
-            }
-            catch (HttpException HttpEX)
-            {
-                throw HttpEX;
-            }
-            catch (SpotifyException SpotifyEX)
-            {
-                throw SpotifyEX;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("AgonManager:GenerateQuiz.", ex.InnerException);
-            }
+
+            allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
+
 
             var quiz = new Quiz();
             quiz._id = Guid.NewGuid().ToString();
@@ -168,17 +138,20 @@ namespace Agon.Models
         {
             int pin;
             // Hämta quiz från quizzes
-            var runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id, "Quizzes"));
+            RunningQuiz runningQuiz;
 
-            // Fixa PIN som inte finns bland quizzar i runningQuizzes
+            runningQuiz = JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizAsync(_id, "Quizzes"));
+
             do
             {
                 pin = randomizer.Next(9999);
             }
             while (await MongoManager.CheckIfPinExistsAsync(pin.ToString(), "runningQuizzes"));
 
+
             runningQuiz.Pin = pin.ToString();
             // Stoppa ner quizzet med PIN i runningQuizzes
+
             if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
             {
                 await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz.Name, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
@@ -188,6 +161,7 @@ namespace Agon.Models
             // Generera QuizMasterVM och returnera
 
             return new QuizMasterVM(runningQuiz);
+
         }
 
         public static async Task<Song> AddSongToQuiz(SpotifyTokens token, string href)
@@ -195,23 +169,9 @@ namespace Agon.Models
             Track newTrack;
             string albumDate;
 
-            try
-            {
-                newTrack = await SpotifyManager.GetOneSong(token, href);
-                albumDate = await SpotifyManager.GetOneAlbum(token, newTrack.Album.Href);
-            }
-            catch (HttpException HttpEX)
-            {
-                throw HttpEX;
-            }
-            catch (SpotifyException SpotifyEX)
-            {
-                throw SpotifyEX;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("AgonManager:AddSongToQuiz.", ex.InnerException);
-            }
+            newTrack = await SpotifyManager.GetOneSong(token, href);
+            albumDate = await SpotifyManager.GetOneAlbum(token, newTrack.Album.Href);
+
             StringBuilder builder = new StringBuilder();
 
             foreach (var artist in newTrack.Artists)
@@ -247,9 +207,8 @@ namespace Agon.Models
             // Add cache-counter.
 
             var jsonAnswer = JsonConvert.SerializeObject(answerForm);
-
-
             await MongoManager.SaveDocumentAsync("answers", jsonAnswer);
+
         }
 
         public static async Task<AnswerKeyVM> GetAnswerKeyVMAsync(string quizID)
@@ -327,7 +286,9 @@ namespace Agon.Models
         public static async Task<UserVM> GetUserVMAsync(string username, bool loggedIn)
         {
             List<Quiz> quizzes = new List<Quiz>();
+
             quizzes = JsonConvert.DeserializeObject<List<Quiz>>(await MongoManager.GetAllQuizzesAsync(username));
+
             var userVM = new UserVM(username, quizzes, loggedIn);
 
             return userVM;
@@ -335,8 +296,10 @@ namespace Agon.Models
 
         public static async Task<QuizPlayerVM> CreateQuizPlayerVM(string pin)
         {
+
             var quizPlayerVM = new QuizPlayerVM(JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizByPinAsync(pin, "runningQuizzes")));
             return quizPlayerVM;
+
         }
     }
 }
