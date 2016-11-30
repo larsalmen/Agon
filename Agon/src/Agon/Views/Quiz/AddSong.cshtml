@@ -25,13 +25,13 @@
             <td>{{album.name}}</td>
             <td>
                 <button type="button" class="btn btn-primary play-button" preview-url="{{preview_url}}">
-                    <span class="glyphicon glyphicon-play"></span> Play
+                    <span class="glyphicon glyphicon-play" style="pointer-events:none;"></span> Play
                 </button>
             </td>
             @*<td><a href="#" preview-url="{{preview_url}}" class="play-button">Play!</a></td>*@
             <td>
                 <button id="add-single-song" type="button" class="btn btn-success" song-id="{{href}}">
-                    <span class="glyphicon glyphicon-plus"></span><span> Add to playlist</span>
+                    <span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span><span style="pointer-events:none;"> Add to playlist</span>
                 </button>
             </td>
         </tr>
