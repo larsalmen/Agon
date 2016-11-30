@@ -44,9 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpException.cs" />
     <Compile Include="ListOfAlbumInfo.cs" />
     <Compile Include="ListOfPlaylists.cs" />
     <Compile Include="ListOfSongs.cs" />
+    <Compile Include="SpotifyException.cs" />
     <Compile Include="SpotifyManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpotifyTokens.cs" />

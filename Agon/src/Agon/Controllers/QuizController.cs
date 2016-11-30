@@ -23,15 +23,21 @@ namespace Agon.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PlaylistVM viewModel)
         {
-            var token = AgonManager.GetSpotifyTokens(this);
-            var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
-
-
-            var currentQuiz = JsonConvert.SerializeObject(newQuiz);
-            await MongoManager.SaveQuizToSession(currentQuiz, token.Username);
-            return RedirectToAction("EditQuiz");
+            try
+            {
+                var token = AgonManager.GetSpotifyTokens(this);
+                var newQuiz = await AgonManager.GenerateQuiz(token, viewModel);
+                var currentQuiz = JsonConvert.SerializeObject(newQuiz);
+                await MongoManager.SaveQuizToSession(currentQuiz, token.Username);
+                return RedirectToAction("EditQuiz");
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("error", ex.Message);
+                return RedirectToAction("Error", "Home");
+            }
         }
-
+        
         [HttpGet]
         public IActionResult AddSong()
         {
@@ -56,7 +62,7 @@ namespace Agon.Controllers
 
                 await MongoManager.SaveQuizToSession(quizToStore, token.Username);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -77,8 +83,16 @@ namespace Agon.Controllers
 
 
             var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
-
-            var updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
+            Quiz updatedQuiz;
+            try
+            {
+                updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("error", ex.Message);
+                return RedirectToAction("Error", "Home");
+            }
 
             await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz.Name, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
@@ -95,6 +109,8 @@ namespace Agon.Controllers
             {
                 var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
                 var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+
+                await SaveQuiz();
 
                 return View(quizToEdit);
             }
@@ -265,7 +281,7 @@ namespace Agon.Controllers
             string cacheKey = id;
             var connectedPlayers = _memoryCache.Get(cacheKey);
 
-            return Json(new { connectedPlayers } );
+            return Json(new { connectedPlayers });
         }
     }
 }

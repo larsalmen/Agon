@@ -15,6 +15,13 @@ namespace Agon.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        public IActionResult Error()
+        {
+            var errorVM = new ErrorVM();
+            errorVM.ErrorMessage = HttpContext.Session.GetString("error");
+
+            return View(errorVM);
+        }
         public async Task<IActionResult> UserLoggedIn()
         {
             var username = User.Identity.Name;
@@ -31,17 +38,25 @@ namespace Agon.Controllers
             {
                 return RedirectToAction(nameof(UserLoggedIn));
             }
-
-            return View();
+            else
+                return View();
         }
 
         public async Task<IActionResult> ViewPlaylists()
         {
             var token = AgonManager.GetSpotifyTokens(this);
+            List<PlaylistVM> viewModel;
+            try
+            {
+                viewModel = await AgonManager.GetPlaylists(token);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("error", ex.Message);
+                return RedirectToAction("Error", "Home");
+            }
 
-            var viewmodel = await AgonManager.GetPlaylists(token);
-
-            return View(viewmodel);
+            return View(viewModel);
         }
 
 

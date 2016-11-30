@@ -14,48 +14,86 @@ namespace SpotifyUtils
     {
         public static string SpotifyClientId { get; set; }
         public static string SpotifyClientSecret { get; set; }
-
-
         public static void SetVariables(string spotifyClientId, string spotifyClientSecret)
         {
             SpotifyClientId = spotifyClientId;
             SpotifyClientSecret = spotifyClientSecret;
         }
-
         public static async Task<ListOfPlaylists> GetAllUserPlaylists(SpotifyTokens token)
         {
             // Checks if the accestoken has expired.
-            CheckToken(token);
+            try
+            {
+                CheckToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:Checktoken failed. This is a known problem, logout and log back in to solve the problem.", ex.InnerException);
+            }
             string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists";
-
-            string text = await HttpRequest(token, endpoint);
-
-            var listOfPlaylists = JsonConvert.DeserializeObject<ListOfPlaylists>(text);
-            listOfPlaylists.Items = listOfPlaylists.Items.Where(i => i.Tracks.Total < 20).ToList();
-            return listOfPlaylists;
+            ListOfPlaylists listOfPlaylists;
+            try
+            {
+                string text = await HttpRequest(token, endpoint);
+                listOfPlaylists = JsonConvert.DeserializeObject<ListOfPlaylists>(text);
+                listOfPlaylists.Items = listOfPlaylists.Items.Where(i => i.Tracks.Total < 20).ToList();
+                return listOfPlaylists;
+            }
+            catch (HttpException ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetAllUserPlaylists, HttpRequest failed.", ex.InnerException);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetAllUserPlaylists, failed to deserializeObject<ListOfPlaylists>", ex.InnerException);
+            }
         }
-
-
         public static async Task<ListOfSongs> GetAllSongsFromPlaylist(SpotifyTokens token, string spotifyRef)
         {
             // Checks if the accestoken has expired.
-            CheckToken(token);
+            try
+            {
+                CheckToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:Checktoken failed. This is a known problem, logout and log back in to solve the problem.", ex.InnerException);
+            }
 
             string endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + spotifyRef + "/tracks?fields=items(track(artists,name,href,preview_url,album(name,href)))";
 
-            string text = await HttpRequest(token, endpoint);
 
-            var listOfSongs = JsonConvert.DeserializeObject<ListOfSongs>(text);
+            ListOfSongs listOfSongs;
 
-            var albumInfo = await GetAlbumInfo(token, listOfSongs);
-            listOfSongs.AlbumInfo = albumInfo;
-            return listOfSongs;
+            try
+            {
+                string text = await HttpRequest(token, endpoint);
+                listOfSongs = JsonConvert.DeserializeObject<ListOfSongs>(text);
+                var albumInfo = await GetAlbumInfo(token, listOfSongs);
+                listOfSongs.AlbumInfo = albumInfo;
+                return listOfSongs;
+            }
+            catch (HttpException ex)
+            {
+                throw new SpotifyException("SpotifyManager: GetAllSongsFromPlaylist, HttpRequest failed.", ex.InnerException);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetAllSongsFromPlaylist, failed to DeserializeObject<ListOfSongs>", ex.InnerException);
+            }
+
         }
-
         private static async Task<ListOfAlbumInfo> GetAlbumInfo(SpotifyTokens token, ListOfSongs listOfSongs)
         {
             // Checks if the accestoken has expired.
-            CheckToken(token);
+            try
+            {
+                CheckToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:Checktoken failed. This is a known problem, logout and log back in to solve the problem.", ex.InnerException);
+            }
 
             StringBuilder endpoint = new StringBuilder();
             endpoint.Append(@"https://api.spotify.com/v1/albums?ids=");
@@ -66,10 +104,20 @@ namespace SpotifyUtils
             }
             endpoint.Remove(endpoint.Length - 1, 1);
 
-            string text = await HttpRequest(token, endpoint.ToString());
-
-            var albumInfo = JsonConvert.DeserializeObject<ListOfAlbumInfo>(text);
-            return albumInfo;
+            try
+            {
+                string text = await HttpRequest(token, endpoint.ToString());
+                var albumInfo = JsonConvert.DeserializeObject<ListOfAlbumInfo>(text);
+                return albumInfo;
+            }
+            catch (HttpException ex)
+            {
+                throw new SpotifyException("SpotifyManager: GetAlbumInfo, HttpRequest failed.", ex.InnerException);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetAlbumInfo - Failed to DeserializeObject<ListOfAlbumInfo>.", ex.InnerException);
+            }
         }
         private static async Task<string> HttpRequest(SpotifyTokens token, string endpoint)
         {
@@ -93,85 +141,132 @@ namespace SpotifyUtils
                 {
                     text = stream.ReadToEnd();
                 }
+                return text;
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw new HttpException("Communication with Spotify failed.", ex.InnerException);
             }
-            return text;
         }
         private static void CheckToken(SpotifyTokens token)
         {
-         
-            // Parses the timestamp to Datetime, adds expiration time (3600 seconds isch) and checks if that time has passed.
-            if (DateTime.Parse(token.Timestamp).AddSeconds(3540) < DateTime.Now)
+            try
             {
-                // Builds a correct refresh request to post to spotify.
-                var endpoint = @"https://accounts.spotify.com/api/token";
-                string authHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(SpotifyClientId + ":" + SpotifyClientSecret));
-                var postData = "grant_type=refresh_token";
-                postData += "&refresh_token=" + token.RefreshToken;
-                var data = Encoding.ASCII.GetBytes(postData);
-
-                var request = WebRequest.CreateHttp(endpoint);
-
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.Headers.Set("Authorization", authHeader);
-                request.ContentLength = data.Length;
-
-                using (Stream requestStream = request.GetRequestStream())
+                if (DateTime.Parse(token.Timestamp).AddSeconds(3540) < DateTime.Now)
                 {
-                    requestStream.Write(data, 0, data.Length);
+                    // Builds a correct refresh request to post to spotify.
+                    var endpoint = @"https://accounts.spotify.com/api/token";
+                    string authHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(SpotifyClientId + ":" + SpotifyClientSecret));
+                    var postData = "grant_type=refresh_token";
+                    postData += "&refresh_token=" + token.RefreshToken;
+                    var data = Encoding.ASCII.GetBytes(postData);
+
+                    var request = WebRequest.CreateHttp(endpoint);
+
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.Headers.Set("Authorization", authHeader);
+                    request.ContentLength = data.Length;
+
+                    using (Stream requestStream = request.GetRequestStream())
+                    {
+                        requestStream.Write(data, 0, data.Length);
+                    }
+
+                    // Gets the response from Spotify.
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        // Get some cool error handling in here.
+                    }
+
+                    // Reads the streams content into the responseBody variable.
+                    var responseBody = "";
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        responseBody = reader.ReadToEnd();
+                    }
+
+                    // Sets the definition for an anon.object to use during deserialization.
+                    var def = new { access_token = "" };
+
+                    var newAccessToken = JsonConvert.DeserializeAnonymousType(responseBody, def);
+
+                    // Sets the new token and timestamp. Discards the rest.
+                    token.AccessToken = newAccessToken.access_token;
+                    token.Timestamp = DateTime.Now.ToString();
                 }
-
-                // Gets the response from Spotify.
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    // Get some cool error handling in here.
-                }
-
-                // Reads the streams content into the responseBody variable.
-                var responseBody = "";
-
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
-
-                // Sets the definition for an anon.object to use during deserialization.
-                var def = new { access_token = "" };
-
-                var newAccessToken = JsonConvert.DeserializeAnonymousType(responseBody, def);
-
-                // Sets the new token and timestamp. Discards the rest.
-                token.AccessToken = newAccessToken.access_token;
-                token.Timestamp = DateTime.Now.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("SpotifyManager:CheckToken. TokenRefresh failed.", ex.InnerException);
             }
         }
-
         public static async Task<string> GetOneAlbum(SpotifyTokens token, string albumHref)
         {
             var endpoint = ("https://api.spotify.com/v1/albums/" + albumHref);
+            string text;
+            try
+            {
+                CheckToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:Checktoken failed. This is a known problem, logout and log back in to solve the problem.", ex.InnerException);
+            }
+            try
+            {
+                text = await HttpRequest(token, endpoint);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Communication with Spotify failed.", ex.InnerException);
+            }
 
-            string text = await HttpRequest(token, endpoint);
+            try
+            {
+                var def = new { release_date = "" };
 
-            var def = new { release_date = "" };
+                var releasedate = JsonConvert.DeserializeAnonymousType(text, def);
 
-            var releasedate = JsonConvert.DeserializeAnonymousType(text, def);
-
-            return releasedate.release_date;
+                return releasedate.release_date;
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetOneAlbum, failed to deserializeAnonymousType", ex.InnerException);
+            }
         }
-
         public static async Task<Track> GetOneSong(SpotifyTokens token, string href)
         {
-            string text = await HttpRequest(token, href);
+            try
+            {
+                CheckToken(token);
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:Checktoken failed. This is a known problem, logout and log back in to solve the problem.", ex.InnerException);
+            }
+            string text;
+            try
+            {
+                text = await HttpRequest(token, href);
+            }
+            catch (Exception ex)
+            {
+                throw new HttpException("Communication with Spotify failed.", ex.InnerException);
+            }
+            try
+            {
+                Track newTrack = JsonConvert.DeserializeObject<Track>(text);
+                return newTrack;
+            }
+            catch (Exception ex)
+            {
+                throw new SpotifyException("SpotifyManager:GetOneSong, failed to deserializeObject<Track>", ex.InnerException);
+            }
 
-            Track newTrack = JsonConvert.DeserializeObject<Track>(text);
-            return newTrack;
         }
     }
 }

@@ -29,8 +29,6 @@ namespace Agon.Models
 
             return token;
         }
-
-
         public static void SetTokensInSession(ExternalLoginInfo info, ISession session)
         {
             var access_token = info.AuthenticationTokens.Where(x => x.Name == "access_token").Select(y => y.Value).FirstOrDefault();
@@ -48,7 +46,15 @@ namespace Agon.Models
 
         internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz, string id)
         {
-            var updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+            Quiz updatedQuiz;
+            try
+            {
+                updatedQuiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AgonManager:UpdateQuestions, failed to deserializeObject<Quiz>", ex.InnerException);
+            }
 
             var song = updatedQuiz.Songs.Where(s => s.SpotifyReferenceID == id).FirstOrDefault();
 
@@ -64,8 +70,23 @@ namespace Agon.Models
 
         public static async Task<List<PlaylistVM>> GetPlaylists(SpotifyTokens token)
         {
-            var allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
-
+            ListOfPlaylists allReturnedPlaylists;
+            try
+            {
+                allReturnedPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
+            }
+            catch (HttpException HttpEX)
+            {
+                throw HttpEX;
+            }
+            catch (SpotifyException SpotifyEX)
+            {
+                throw SpotifyEX;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AgonManager:GetPlaylists", ex.InnerException);
+            }
             var playlists = new List<PlaylistVM>();
 
             foreach (var item in allReturnedPlaylists.Items)
@@ -77,7 +98,23 @@ namespace Agon.Models
         }
         public static async Task<Quiz> GenerateQuiz(SpotifyTokens token, PlaylistVM viewModel)
         {
-            var allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
+            ListOfSongs allReturnedSongs;
+            try
+            {
+                allReturnedSongs = await SpotifyManager.GetAllSongsFromPlaylist(token, viewModel.SpotifyRef);
+            }
+            catch (HttpException HttpEX)
+            {
+                throw HttpEX;
+            }
+            catch (SpotifyException SpotifyEX)
+            {
+                throw SpotifyEX;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AgonManager:GenerateQuiz.", ex.InnerException);
+            }
 
             var quiz = new Quiz();
             quiz._id = Guid.NewGuid().ToString();
@@ -142,9 +179,26 @@ namespace Agon.Models
 
         public static async Task<Song> AddSongToQuiz(SpotifyTokens token, string href)
         {
-            var newTrack = await SpotifyManager.GetOneSong(token, href);
+            Track newTrack;
+            string albumDate;
 
-            var albumDate = await SpotifyManager.GetOneAlbum(token, newTrack.Album.Href);
+            try
+            {
+                newTrack = await SpotifyManager.GetOneSong(token, href);
+                albumDate = await SpotifyManager.GetOneAlbum(token, newTrack.Album.Href);
+            }
+            catch (HttpException HttpEX)
+            {
+                throw HttpEX;
+            }
+            catch (SpotifyException SpotifyEX)
+            {
+                throw SpotifyEX;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AgonManager:AddSongToQuiz.", ex.InnerException);
+            }
             StringBuilder builder = new StringBuilder();
 
             foreach (var artist in newTrack.Artists)
@@ -213,7 +267,7 @@ namespace Agon.Models
                     for (int k = 0; k < submittedAnswers.Count; k++)
                     {
                         answer = submittedAnswers[k].Answers[counter];
-                        answers.Add(new AnswerKeySubmittedAnswerVM { Answer = answer, SubmitterName = submittedAnswers[k].SubmitterName,IsCorrect = (answer.ToLower() == (runningQuiz.Songs[i].Questions[j].CorrectAnswer).ToLower()) });
+                        answers.Add(new AnswerKeySubmittedAnswerVM { Answer = answer, SubmitterName = submittedAnswers[k].SubmitterName, IsCorrect = (answer.ToLower() == (runningQuiz.Songs[i].Questions[j].CorrectAnswer).ToLower()) });
                     }
                     var correctAnswer = runningQuiz.Songs[i].Questions[j].CorrectAnswer;
                     var text = runningQuiz.Songs[i].Questions[j].Text;

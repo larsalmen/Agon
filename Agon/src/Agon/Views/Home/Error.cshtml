@@ -1,0 +1,8 @@
+﻿@model ErrorVM
+
+<h1>Whoopsie! Something broke. Go home and try again.</h1>
+<p>@Model.ErrorMessage</p>
+
+<form asp-controller="Home" asp-action="UserLoggedIn" method="post">
+    <button type="submit" class="btn btn-success btn-lg">Return home.</button>
+</form>
