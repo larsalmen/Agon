@@ -43,6 +43,12 @@ namespace Agon.Controllers
         {
             return View();
         }
+        public void RemoveSongFromQuiz(int index)
+        {
+            var token = AgonManager.GetSpotifyTokens(this);
+
+            AgonManager.RemoveSongFromQuiz(token, index);
+        }
 
         [HttpPost]
         public async void AddSingleSong(string href)

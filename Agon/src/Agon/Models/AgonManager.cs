@@ -44,6 +44,19 @@ namespace Agon.Models
             session.SetString("timestamp", timestamp);
         }
 
+        public static async void RemoveSongFromQuiz(SpotifyTokens token, int indexToRemove)
+        {
+            var currentQuizJson = await MongoManager.GetQuizFromSession(token.Username);
+            var currentQuiz = JsonConvert.DeserializeObject<Quiz>(currentQuizJson);
+
+            currentQuiz.Songs.RemoveAt(indexToRemove);
+
+            currentQuizJson = JsonConvert.SerializeObject(currentQuiz);
+
+            await MongoManager.SaveQuizToSession(currentQuizJson, token.Username);
+
+        }
+
         internal static Quiz UpdateQuestions(StringValues questionText, StringValues answerText, string jsonQuiz, string id)
         {
             Quiz updatedQuiz;

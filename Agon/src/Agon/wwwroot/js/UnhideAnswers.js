@@ -5,5 +5,5 @@
         var counter = target.name;
         $('#songPlaceholder' + counter).hide();
         $('#song' + counter).show();
-    })
+    });
 });

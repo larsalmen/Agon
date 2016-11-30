@@ -11,7 +11,7 @@
                         @*<br />*@
                         <span class="input-group-addon">
                             <button type="button" aria-label="..." name="@counter" id="@counter" class="removeRow btn btn-danger">
-                                <span class="glyphicon glyphicon-trash"></span>&nbspRemove
+                                <span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove
                             </button>
                         </span>
                         <input type="text" class="form-control" name="item.Text" id="Question-@counter" value="@Model.Questions[i].Text">
@@ -20,13 +20,6 @@
                     <div id="divCounter-@(counter++)" style="display:none;"></div>
                 }
             </div>
-            @*@{ counter = 0;}
-                @foreach (var item in Model.Questions)
-                {
-                    <input type="text" name="item.Text" id="Question-@counter" value="@item.Text" />
-                    <input type="text" name="item.CorrectAnswer" value="@item.CorrectAnswer" id="Answer-@(counter++)" /><br />
-
-                }*@
             <input type="hidden" value="@Model.SpotifyReferenceID" name="id" />
             <button id="addField" class="btn btn-primary" name="@counter">Add new question</button>
             <input type="submit" class="btn btn-success" value="Save" />
