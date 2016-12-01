@@ -14,8 +14,7 @@
             <b>@($"{question.Text} ({question.CorrectAnswer})")</b><br />
             @foreach (var answer in question.SubmittedAnswers)
             {
-                @($"{answer.SubmitterName}: {answer.Answer}") <input type="checkbox" checked="@answer.IsCorrect" name="@($"answer_{answerIndex}")" />
-                @(answerIndex++)
+                @($"{answer.SubmitterName}: {answer.Answer}") <input type="checkbox" checked="@answer.IsCorrect" name="@($"answer_{answerIndex++}")" />
                 <br />
             }
             <br />

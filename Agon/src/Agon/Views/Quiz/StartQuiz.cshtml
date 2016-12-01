@@ -39,8 +39,10 @@
             </div>
         }
     </div>
+    <p>Number of submits: <b id="respondents"></b> </p>
+
     <form asp-controller="Quiz" asp-action="Review" method="get">
-        <button name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
+        <button id="quizId" name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
     </form>
 </div>
 <script src="~/js/UnhideAnswers.js"></script>
