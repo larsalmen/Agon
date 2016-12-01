@@ -94,17 +94,9 @@ namespace Agon.Controllers
         [HttpPost]
         public IActionResult EditSong(string id)
         {
-            try
-            {
-                var viewModel = AgonManager.CreateEditSongVM(id);
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Session.SetString("error", ex.Message);
-                return RedirectToError();
-            }
+            var viewModel = AgonManager.CreateEditSongVM(id);
 
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -141,33 +133,19 @@ namespace Agon.Controllers
         [HttpGet]
         public async Task<IActionResult> EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
         {
-            try
+            var currentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
+            if (currentQuiz != null && currentQuiz != "")
             {
-                var currentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
-                if (currentQuiz != null && currentQuiz != "")
-                {
 
-                    var quizToEdit = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
+                var quizToEdit = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
 
-                    await SaveQuiz();
+                await SaveQuiz();
 
-                    return View(quizToEdit);
-                }
-
-                else
-                {
-                    return RedirectToAction("UserLoggedIn", "Home");
-                }
+                return View(quizToEdit);
             }
-            catch (MongoException mex)
+            else
             {
-                HttpContext.Session.SetString("error", mex.Message);
-                return RedirectToAction("Error", "Home");
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Session.SetString("error", ex.Message);
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("UserLoggedIn", "Home");
             }
         }
         [HttpPost]
@@ -351,19 +329,6 @@ namespace Agon.Controllers
             try
             {
                 await AgonManager.SaveAnswerAsync(answers, id, SubmitterName);
-
-                string cacheKey = id;
-                var submits = _memoryCache.Get<List<string>>(cacheKey);
-
-                if (submits == null)
-                {
-                    submits = new List<string>();
-                }
-
-                submits.Add(SubmitterName);
-                _memoryCache.Set<List<string>>(cacheKey, submits);
-
-
                 return View("SubmitAnswer", SubmitterName);
             }
             catch (MongoException mex)
@@ -382,22 +347,7 @@ namespace Agon.Controllers
         [HttpGet]
         public async Task<bool> CheckPin(string id)
         {
-            bool exists = true;
-            try
-            {
-                exists = await MongoManager.CheckIfPinExistsAsync(id, "runningQuizzes");
-            }
-            catch (MongoException mex)
-            {
-                HttpContext.Session.SetString("error", mex.Message);
-                RedirectToError();
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Session.SetString("error", ex.Message);
-                RedirectToError();
-            }
-            return exists;
+            return await MongoManager.CheckIfPinExistsAsync(id, "runningQuizzes");
         }
 
 
@@ -405,21 +355,8 @@ namespace Agon.Controllers
         [HttpGet]
         public async Task<IActionResult> Review(string quizID)
         {
-            try
-            {
-                AnswerKeyVM viewModel = await AgonManager.GetAnswerKeyVMAsync(quizID);
-                return View(viewModel);
-            }
-            catch (MongoException mex)
-            {
-                HttpContext.Session.SetString("error", mex.Message);
-                return RedirectToAction("Error", "Home");
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Session.SetString("error", ex.Message);
-                return RedirectToAction("Error", "Home");
-            }
+            AnswerKeyVM viewModel = await AgonManager.GetAnswerKeyVMAsync(quizID);
+            return View(viewModel);
         }
 
 
@@ -500,13 +437,6 @@ namespace Agon.Controllers
             var playerNames = _memoryCache.Get<List<string>>(cacheKey).Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
 
             return Json(new { playerNames });
-        }
-        public IActionResult GetUsernamesOfSubmits(string id)
-        {
-            string cacheKey = id;
-            var submits = _memoryCache.Get<List<string>>(cacheKey).Aggregate((x, y) => $"{x}<br/>{y}");
-
-            return Json(new { submits });
         }
     }
 }
