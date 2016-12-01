@@ -374,5 +374,26 @@ namespace MongoUtils
             }
 
         }
+
+        /// <summary>
+        /// Deletes the document that matches the specified filter "_id" from the specified collection.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task DeleteDocument(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            try
+            {
+                await col.FindOneAndDeleteAsync($"{{_id: '{_id}' }}");
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:DeleteDocument. Document removal failed.", ex.InnerException);
+            }
+        }
     }
 }

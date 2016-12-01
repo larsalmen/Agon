@@ -31,13 +31,17 @@ namespace Agon.Controllers
                 await MongoManager.SaveQuizToSession(currentQuiz, token.Username);
                 return RedirectToAction("EditQuiz");
             }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                return RedirectToAction("Error", "Home");
+            }
             catch (Exception ex)
             {
                 HttpContext.Session.SetString("error", ex.Message);
                 return RedirectToAction("Error", "Home");
             }
         }
-
         [HttpGet]
         public IActionResult AddSong()
         {
@@ -50,23 +54,25 @@ namespace Agon.Controllers
             {
                 await AgonManager.RemoveSongFromQuiz(token, index);
             }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                RedirectToError();
+            }
             catch (Exception ex)
             {
                 HttpContext.Session.SetString("error", ex.Message);
-                RedirectToAction("Error", "Home");
+                RedirectToError();
             }
         }
-
         [HttpPost]
-        public async void AddSingleSong(string href)
+        public async Task AddSingleSong(string href)
         {
-
-            var token = AgonManager.GetSpotifyTokens(this);
-            var currentQuiz = await MongoManager.GetQuizFromSession(token.Username);
-            var newSong = await Task.Run(async () => await AgonManager.AddSongToQuiz(token, href));
-
             try
             {
+                var token = AgonManager.GetSpotifyTokens(this);
+                var currentQuiz = await MongoManager.GetQuizFromSession(token.Username);
+                var newSong = await Task.Run(async () => await AgonManager.AddSongToQuiz(token, href));
                 var newQuiz = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
                 newQuiz.Songs.Add(newSong);
 
@@ -74,9 +80,15 @@ namespace Agon.Controllers
 
                 await MongoManager.SaveQuizToSession(quizToStore, token.Username);
             }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                RedirectToError();
+            }
             catch (Exception ex)
             {
-                throw;
+                HttpContext.Session.SetString("error", ex.Message);
+                RedirectToError();
             }
         }
         [HttpPost]
@@ -94,15 +106,20 @@ namespace Agon.Controllers
             var answerText = Request.Form["item.CorrectAnswer"];
 
 
-            var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
             Quiz updatedQuiz;
             try
             {
+                var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
                 updatedQuiz = AgonManager.UpdateQuestions(questionText, answerText, jsonQuiz, id);
                 await MongoManager.ReplaceOneQuizAsync(updatedQuiz.Owner, updatedQuiz.Name, JsonConvert.SerializeObject(updatedQuiz), "Quizzes");
 
                 var currentQuiz = JsonConvert.SerializeObject(updatedQuiz);
                 await MongoManager.SaveQuizToSession(currentQuiz, HttpContext.User.Identity.Name);
+            }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                return RedirectToAction("Error", "Home");
             }
             catch (Exception ex)
             {
@@ -118,7 +135,7 @@ namespace Agon.Controllers
         {
             var currentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
             if (currentQuiz != null && currentQuiz != "")
-            {            
+            {
 
                 var quizToEdit = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
 
@@ -131,7 +148,6 @@ namespace Agon.Controllers
                 return RedirectToAction("UserLoggedIn", "Home");
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> EditQuiz(string _id)
         {
@@ -140,6 +156,11 @@ namespace Agon.Controllers
                 var quiz = await MongoManager.GetOneQuizAsync(_id, "Quizzes");
                 await MongoManager.SaveQuizToSession(quiz, HttpContext.User.Identity.Name);
                 return RedirectToAction("EditQuiz");
+            }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                return RedirectToAction("Error", "Home");
             }
             catch (Exception ex)
             {
@@ -176,12 +197,12 @@ namespace Agon.Controllers
             catch (MongoException mex)
             {
                 HttpContext.Session.SetString("error", mex.Message);
-                RedirectToAction("Error", "Home");
+                RedirectToError();
             }
             catch (Exception ex)
             {
                 HttpContext.Session.SetString("error", ex.Message);
-                RedirectToAction("Error", "Home");
+                RedirectToError();
             }
         }
 
@@ -214,12 +235,12 @@ namespace Agon.Controllers
             catch (MongoException mex)
             {
                 HttpContext.Session.SetString("error", mex.Message);
-                RedirectToAction("Error", "Home");
+                RedirectToError();
             }
             catch (Exception ex)
             {
                 HttpContext.Session.SetString("error", ex.Message);
-                RedirectToAction("Error", "Home");
+                RedirectToError();
             }
         }
         [AllowAnonymous]
@@ -242,8 +263,6 @@ namespace Agon.Controllers
                 HttpContext.Session.SetString("error", ex.Message);
                 return RedirectToAction("Error", "Home");
             }
-
-
 
             if (pinExists)
             {
@@ -404,6 +423,10 @@ namespace Agon.Controllers
             var connectedPlayers = _memoryCache.Get(cacheKey);
 
             return Json(new { connectedPlayers });
+        }
+        private ActionResult RedirectToError()
+        {
+            return RedirectToAction("Error", "Home");
         }
     }
 }
