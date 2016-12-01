@@ -1,12 +1,11 @@
 ﻿$(document).ready(function () {
-
-    $("#startQuizButton").click(function () {
-        var val = $('#actuallyStartQuiz').val();
-        $.get("/Quiz/DropPin/" + val);
-        $('#pinHeadline').hide("slow");
-        $('#startQuizInfo').hide("slow");
-        $('#actuallyStartQuiz').hide("slow");
-        $('#actualQuiz').show("slow");
-        clearInterval(refreshIntervalId);
+    var fewSeconds = 5;
+    $('#startQuizButton').mouseup(function () {
+        $('#StartQuizForm').submit();
+        var btn = $(this);
+        btn.prop('disabled', true);
+        setTimeout(function () {
+            btn.prop('disabled', false);
+        }, fewSeconds * 1000);
     });
 });

@@ -1,6 +1,6 @@
 ﻿@model Quiz
 
-<form asp-controller="Quiz" asp-action="StartQuiz">
+<form asp-controller="Quiz" asp-action="StartQuiz" id="StartQuizForm">
     <input type="hidden" name="_id" value='@Model._id' />
     <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="Start quiz!" />
 </form>
@@ -29,3 +29,4 @@
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
 <script src="~/js/SetButtonSize.js"></script>
+<script src="~/js/disableStartQuiz.js"></script>
