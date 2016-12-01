@@ -15,6 +15,8 @@ namespace MongoUtils
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
         const string sessionCollection = "session";
+        const string answersCollection = "answers";
+
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -159,6 +161,35 @@ namespace MongoUtils
                     await col.DeleteOneAsync($"{{ Owner: '{owner}', Name: '{name}'}}");
 
                 await Task.Delay(1000);
+
+                await col.InsertOneAsync(quiz);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:ReplaceOneQuizAsync. Document replacement failed.", ex.InnerException);
+            }
+        }
+
+        /// <summary>
+        /// Finds one quiz from the quiz collection, based on filter "_id", and replaces atomically it 
+        /// with the deserialized BSONDocument result of "quizJson".
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="quizJson"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task ReplaceOneQuizAsync(string _id, string quizJson, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            try
+            {
+                var quiz = BsonDocument.Parse(quizJson);
+                if (await col.Find($"{{ _id: '{_id}'}}").CountAsync() > 0)
+                    await col.DeleteOneAsync($"{{ _id: '{_id}'}}");
+
 
                 await col.InsertOneAsync(quiz);
             }
@@ -344,6 +375,47 @@ namespace MongoUtils
                 throw new MongoException("MongoManager:GetAllAnswerFormsAsync. Retrieving answers failed.", ex.InnerException);
             }
 
+        }
+
+        /// <summary>
+        /// Deletes the document that matches the specified filter "_id" from the specified collection.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task DeleteDocument(string _id, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            try
+            {
+                await col.FindOneAndDeleteAsync($"{{_id: '{_id}' }}");
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:DeleteDocument. Document removal failed.", ex.InnerException);
+            }
+        }
+
+        /// <summary>
+        /// Deletes all documents that matches the specified filter "runningQuizzId" from the "answers" collection.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <returns></returns>
+        public static async Task ClearOldAnswers(string runningQuizId)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(answersCollection);
+
+            try
+            {
+                await col.DeleteManyAsync($"{{RunningQuizId: '{runningQuizId}' }}");
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:ClearOldAnswers. Document removal failed.", ex.InnerException);
+            }
         }
     }
 }

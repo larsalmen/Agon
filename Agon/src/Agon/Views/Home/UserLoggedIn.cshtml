@@ -12,23 +12,23 @@ else
 {
     <h1>Skapa din första quiz!</h1>
 }
+
 <div class="list-group" style="display:inline-block;">
     @foreach (var quiz in Model.Quizzes)
     {
-        <form asp-controller="Quiz" asp-action="EditQuiz">
-            <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
-            <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
-            <button class="list-group-item">@quiz.Name</button>
-            <!--<a asp-controller="Quiz" asp-action="EditQuiz" class="list-group-item">@quiz.Name</a>-->
-        </form>
+        <div id="@(quiz._id)" class="RemoveDivQuiz">
+            <form asp-controller="Quiz" asp-action="EditQuiz">
+                <button class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
+                <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
+                <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
+                <button class="list-group-item">@quiz.Name</button>
+                <!--<a asp-controller="Quiz" asp-action="EditQuiz" class="list-group-item">@quiz.Name</a>-->
+            </form>
+        </div>
     }
     <br />
     <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success clearfix">
         <span class="glyphicon glyphicon-plus"></span> Importera playlist från Spotify
     </a>
 </div>
-
-
-@*<form asp-controller="Home" asp-action="ViewPlaylists" method="post">
-    <button type="submit">Get playlists!</button>
-</form>*@
+<script src="~/js/RemoveQuiz.js"></script>
