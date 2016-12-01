@@ -116,11 +116,11 @@ namespace Agon.Controllers
         [HttpGet]
         public async Task<IActionResult> EditQuiz() // 2016-11-25 21:31 - Här kan man ta in _id och få det från Home/ViewPlaylists, om man vill och behöver
         {
-            var checkCurrentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
-            if (checkCurrentQuiz != null && checkCurrentQuiz != "")
-            {
-                var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
-                var quizToEdit = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+            var currentQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
+            if (currentQuiz != null && currentQuiz != "")
+            {            
+
+                var quizToEdit = JsonConvert.DeserializeObject<Quiz>(currentQuiz);
 
                 await SaveQuiz();
 
@@ -147,15 +147,22 @@ namespace Agon.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
-        public async Task SaveQuiz()
+        public async Task SaveQuiz(string quizName = null)
         {
-            var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
 
             try
             {
+                var jsonQuiz = await MongoManager.GetQuizFromSession(HttpContext.User.Identity.Name);
                 var quiz = JsonConvert.DeserializeObject<Quiz>(jsonQuiz);
+                if (quizName != null)
+                {
+                    quiz.Name = quizName;
 
-                if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
+                    jsonQuiz = JsonConvert.SerializeObject(quiz);
+
+                    await MongoManager.ReplaceOneQuizAsync(quiz._id, jsonQuiz, "Quizzes");
+                }
+                else if (await MongoManager.CheckIfDocumentExistsAsync(quiz.Owner, quiz.Name, "Quizzes"))
                 {
                     await MongoManager.ReplaceOneQuizAsync(quiz.Owner, quiz.Name, jsonQuiz, "Quizzes");
                 }
@@ -163,6 +170,13 @@ namespace Agon.Controllers
                 {
                     await MongoManager.SaveDocumentAsync(jsonQuiz);
                 }
+
+                await MongoManager.SaveQuizToSession(jsonQuiz, quiz.Owner);
+            }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                RedirectToAction("Error", "Home");
             }
             catch (Exception ex)
             {

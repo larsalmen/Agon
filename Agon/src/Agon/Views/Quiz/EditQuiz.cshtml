@@ -8,7 +8,7 @@
 <h1>Edit your quiz!</h1>
 @{ int counter = 0;}
 
-
+<h2><input type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
     @foreach (var song in Model.Songs)
     {
         <div id="@counter" class="RemoveDiv">

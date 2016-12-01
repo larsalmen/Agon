@@ -169,6 +169,35 @@ namespace MongoUtils
         }
 
         /// <summary>
+        /// Finds one quiz from the quiz collection, based on filter "_id", and replaces atomically it 
+        /// with the deserialized BSONDocument result of "quizJson".
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <param name="quizJson"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static async Task ReplaceOneQuizAsync(string _id, string quizJson, string collection)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var col = agony.GetCollection<BsonDocument>(collection);
+
+            try
+            {
+                var quiz = BsonDocument.Parse(quizJson);
+                if (await col.Find($"{{ _id: '{_id}'}}").CountAsync() > 0)
+                    await col.DeleteOneAsync($"{{ _id: '{_id}'}}");
+
+
+                await col.InsertOneAsync(quiz);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:ReplaceOneQuizAsync. Document replacement failed.", ex.InnerException);
+            }
+        }
+
+        /// <summary>
         /// Checks and returns true if any document in the default quiz collection exists that matches the filter quiz "Owner" and quiz "Name".
         /// </summary>
         /// <param name="owner"></param>
