@@ -1,13 +1,12 @@
 ﻿@model List<PlaylistVM>
-<h1>Välj en playlist att importera från Spotify</h1>
+<h1>Click a playlist to import it from Spotify!</h1>
 <div class="list-group" style="display:inline-block;">
     @foreach (var playlist in Model)
     {
-        <form asp-controller="Quiz" asp-action="Create" onsubmit="return confirm('Vill du skapa en quiz från playlisten @playlist.Name?');">
+        <form asp-controller="Quiz" asp-action="Create" onsubmit="return confirm('Do you want to create a quiz from @playlist.Name?');">
             <input type="hidden" name="@nameof(PlaylistVM.Name)" value="@playlist.Name" />
             <input type="hidden" name="@nameof(PlaylistVM.SpotifyRef)" value="@playlist.SpotifyRef" />
-            <!--<input type="submit" value="@playlist.Name" />-->
-            <button asp-controller="Quiz" asp-action="@playlist.Name" class="list-group-item ">@playlist.Name</button>
+            <button asp-controller="Quiz" asp-action="@playlist.Name" class="list-group-item btn btn-default">@playlist.Name</button>
         </form>
     }
 </div>

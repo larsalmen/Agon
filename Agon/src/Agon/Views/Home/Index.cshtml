@@ -68,7 +68,7 @@
 
     function IsUsernameAvailable(username, dialog) {
         $.ajax({
-            url: "/Quiz/IsUsernameAvailable/" + username,
+            url: "/Quiz/IsUsernameAvailable?quizPin=" + $('#pin').val() + "&username=" + username,
             type: "GET",
             success: returnValue
         });
