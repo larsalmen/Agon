@@ -29,6 +29,14 @@ namespace Agon.Models
 
             return token;
         }
+
+        internal static void LogError(LogError logError)
+        {
+            var errorJson = JsonConvert.SerializeObject(logError);
+
+            MongoManager.LogError(errorJson);
+        }
+
         public static void SetTokensInSession(ExternalLoginInfo info, ISession session)
         {
             var access_token = info.AuthenticationTokens.Where(x => x.Name == "access_token").Select(y => y.Value).FirstOrDefault();
