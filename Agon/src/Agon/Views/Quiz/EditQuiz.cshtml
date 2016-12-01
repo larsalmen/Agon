@@ -16,7 +16,7 @@
                 <div class="list-group">
                     <form asp-controller="Quiz" asp-action="EditSong">
                         <button class="RemoveSong removeRow btn btn-danger" name="@(counter++)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
-                        <button type="submit" class="btn btn-default" style="max-width:640px;min-width:350px">@song.Artist - @song.Title</button>
+                        <button type="submit" class="btn btn-default" style="min-width:350px">@song.Artist - @song.Title</button>
                         <div class="btn" style="visibility:hidden">&nbspRemove</div>
                         <input type="hidden" name="id" value='@Json.Serialize(song)' />
                     </form>
@@ -24,13 +24,8 @@
             </div>
         </div>
     }
-
-
-
-
-
 <button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
 <button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
-
+<script src="~/js/SetButtonSize.js"></script>
