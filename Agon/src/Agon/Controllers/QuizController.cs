@@ -94,9 +94,17 @@ namespace Agon.Controllers
         [HttpPost]
         public IActionResult EditSong(string id)
         {
-            var viewModel = AgonManager.CreateEditSongVM(id);
+            try
+            {
+                var viewModel = AgonManager.CreateEditSongVM(id);
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("error", ex.Message);
+                return RedirectToError();
+            }
         }
 
         [HttpPost]
