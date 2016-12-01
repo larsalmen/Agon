@@ -15,6 +15,8 @@ namespace MongoUtils
         const string databaseName = "agony";
         const string quizCollection = "Quizzes";
         const string sessionCollection = "session";
+        const string answersCollection = "answers";
+
 
         static public string MongoConnection { get; set; }
         static MongoClient mongoClient;
@@ -393,6 +395,26 @@ namespace MongoUtils
             catch (Exception ex)
             {
                 throw new MongoException("MongoManager:DeleteDocument. Document removal failed.", ex.InnerException);
+            }
+        }
+
+        /// <summary>
+        /// Deletes all documents that matches the specified filter "runningQuizzId" from the "answers" collection.
+        /// </summary>
+        /// <param name="_id"></param>
+        /// <returns></returns>
+        public static async Task ClearOldAnswers(string runningQuizId)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(answersCollection);
+
+            try
+            {
+                await col.DeleteManyAsync($"{{RunningQuizId: '{runningQuizId}' }}");
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:ClearOldAnswers. Document removal failed.", ex.InnerException);
             }
         }
     }

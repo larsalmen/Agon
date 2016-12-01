@@ -136,6 +136,7 @@ namespace Agon.Models
 
         public static async Task<QuizMasterVM> StartQuiz(string _id)
         {
+            await MongoManager.ClearOldAnswers(_id);
             int pin;
             // Hämta quiz från quizzes
             RunningQuiz runningQuiz;
@@ -154,7 +155,7 @@ namespace Agon.Models
 
             if (await MongoManager.CheckIfDocumentExistsAsync(runningQuiz._id, "runningQuizzes"))
             {
-                await MongoManager.ReplaceOneQuizAsync(runningQuiz.Owner, runningQuiz.Name, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
+                await MongoManager.ReplaceOneQuizAsync(runningQuiz._id, JsonConvert.SerializeObject(runningQuiz), "runningQuizzes");
             }
             else
                 await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
