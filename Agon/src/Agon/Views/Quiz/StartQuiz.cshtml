@@ -12,6 +12,7 @@
 <script src="~/js/ActuallyStartQuiz.js"></script>
 <script src="~/js/PlayPreview.js"></script>
 <script src="~/js/PollConnectedPlayers.js"></script>
+<script src="~/js/PollSubmits.js"></script>
 <div id="actualQuiz" class="hiddenQuiz">
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
@@ -39,8 +40,11 @@
             </div>
         }
     </div>
+    <p>Submits: <b id="submits"></b> </p>
+    <div id="submitterNames">
+    </div>
     <form asp-controller="Quiz" asp-action="Review" method="get">
-        <button name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
+        <button id="quizID" name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
     </form>
 </div>
 <script src="~/js/UnhideAnswers.js"></script>

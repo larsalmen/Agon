@@ -329,6 +329,18 @@ namespace Agon.Controllers
             try
             {
                 await AgonManager.SaveAnswerAsync(answers, id, SubmitterName);
+
+                string cacheKey = id;
+                var submits = _memoryCache.Get<List<string>>(cacheKey);
+
+                if (submits == null)
+                {
+                    submits = new List<string>();
+                }
+
+                submits.Add(SubmitterName);
+                _memoryCache.Set<List<string>>(cacheKey, submits);
+
                 return View("SubmitAnswer", SubmitterName);
             }
             catch (MongoException mex)
@@ -434,9 +446,24 @@ namespace Agon.Controllers
         public IActionResult GetUsernamesOfConnectedPlayers(string id)
         {
             string cacheKey = id;
-            var playerNames = _memoryCache.Get<List<string>>(cacheKey).Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
+            var playerNames = _memoryCache.Get<List<string>>(cacheKey)?.Aggregate((x, y) => $"{x}<br/>{y}");
 
             return Json(new { playerNames });
+        }
+
+        public IActionResult GetUsernamesOfSubmits(string id)
+        {
+            string cacheKey = id;
+            var submits = _memoryCache.Get<List<string>>(cacheKey)?.Aggregate((x, y) => $"{x}<br/>{y}");
+
+            return Json(new { submits });
+        }
+        public IActionResult CheckNumberOfSubmits(string id)
+        {
+            string cacheKey = id;
+            var noOfSubmits = _memoryCache.Get<List<string>>(cacheKey)?.Count;
+
+            return Json(new { noOfSubmits });
         }
     }
 }
