@@ -17,14 +17,20 @@ else
     @foreach (var quiz in Model.Quizzes)
     {
         <div id="@(quiz._id)" class="RemoveDivQuiz">
-            <form asp-controller="Quiz" asp-action="EditQuiz">
-                <button class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
-                <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
-                <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
-                <button class="list-group-item">@quiz.Name</button>
-                <!--<a asp-controller="Quiz" asp-action="EditQuiz" class="list-group-item">@quiz.Name</a>-->
-            </form>
+            <div class="container-full">
+                <div class="list-group">
+                    <form asp-controller="Quiz" asp-action="EditQuiz">
+                        <button class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
+                        <button class="btn btn-default" style="min-width:350px">@quiz.Name</button>
+                        <div class="btn" style="visibility:hidden">&nbspRemove</div>
+                        <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
+                        <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
+                        <!--<a asp-controller="Quiz" asp-action="EditQuiz" class="list-group-item">@quiz.Name</a>-->
+                    </form>
+                </div>
+            </div>
         </div>
+
     }
     <br />
     <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success clearfix">
@@ -32,3 +38,4 @@ else
     </a>
 </div>
 <script src="~/js/RemoveQuiz.js"></script>
+<script src="~/js/SetButtonSize.js"></script>

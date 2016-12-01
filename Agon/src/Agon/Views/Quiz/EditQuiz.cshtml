@@ -7,6 +7,8 @@
 
 <h1>Edit your quiz!</h1>
 @{ int counter = 0;}
+<button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
+<button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
 
 <h2><input type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
     @foreach (var song in Model.Songs)
@@ -24,8 +26,6 @@
             </div>
         </div>
     }
-<button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
-<button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
 <script src="~/js/SetButtonSize.js"></script>
