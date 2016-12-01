@@ -147,6 +147,12 @@ namespace Agon.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
+
+        public string RemoveQuiz(string id)
+        {
+
+            return id;
+        }
         public async Task SaveQuiz(string quizName = null)
         {
 
