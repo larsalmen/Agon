@@ -169,10 +169,24 @@ namespace Agon.Controllers
             }
         }
 
-        public string RemoveQuiz(string id)
+        public async Task RemoveQuiz(string id)
         {
+            try
+            {
+                await MongoManager.DeleteDocument(id, "Quizzes");
 
-            return id;
+            }
+            catch (MongoException mex)
+            {
+                HttpContext.Session.SetString("error", mex.Message);
+                RedirectToError();
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetString("error", ex.Message);
+                RedirectToError();
+            }
+
         }
         public async Task SaveQuiz(string quizName = null)
         {
