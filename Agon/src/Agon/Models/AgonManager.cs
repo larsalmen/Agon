@@ -226,7 +226,6 @@ namespace Agon.Models
 
             var answerkeySongs = new List<AnswerKeySongVM>();
 
-
             int counter = 0;
             for (int i = 0; i < runningQuiz.Songs.Count; i++)
             {

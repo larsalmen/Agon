@@ -209,7 +209,7 @@ namespace Agon.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<IActionResult> PlayQuiz(string pin)
+        public async Task<IActionResult> PlayQuiz(string pin, string validusername)
         {
             QuizPlayerVM quizPlayerVM;
             bool pinExists;
@@ -265,6 +265,7 @@ namespace Agon.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> SubmitAnswer(string SubmitterName)
@@ -288,9 +289,11 @@ namespace Agon.Controllers
             }
         }
 
-        public async Task<bool> CheckPin(string pin)
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<bool> CheckPin(string id)
         {
-            return await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes");
+            return await MongoManager.CheckIfPinExistsAsync(id, "runningQuizzes");
         }
 
 
@@ -390,6 +393,12 @@ namespace Agon.Controllers
             var connectedPlayers = _memoryCache.Get(cacheKey);
 
             return Json(new { connectedPlayers });
+        }
+
+        [AllowAnonymous]
+        public bool IsUsernameAvailable(string id)
+        {
+            return true;
         }
     }
 }
