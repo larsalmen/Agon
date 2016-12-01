@@ -1,9 +1,11 @@
 ﻿@model Quiz
-<form asp-controller="Quiz" asp-action="StartQuiz">
+<form asp-controller="Quiz" asp-action="StartQuiz" id="StartQuizForm" >
     <input type="hidden" name="_id" value='@Model._id' />
     <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="START QUIZ!"/>
 </form>
 <h1>Edit your quiz!</h1>
+<button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
+<button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
 <h2><input type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
 @{ int counter = 0;}
 @{ int hasQuestionCounter = 0;}
@@ -73,8 +75,6 @@
         </div>
     </div>
 }
-<button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
-<button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
 <button class="btn btn-primary" onclick="location.href='@Url.Action("UserLoggedIn", "Home")'">Return to home page</button>
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
