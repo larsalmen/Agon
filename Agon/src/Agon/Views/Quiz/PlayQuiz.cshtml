@@ -5,7 +5,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/mvc/5.2.3/jquery.validate.unobtrusive.min.js"></script>
 
-<form asp-controller="Quiz" asp-action="SubmitAnswer" onsubmit="return confirm('Do you want to submit your answers?');">
+<form asp-controller="Quiz" asp-action="SubmitAnswer">
     <h2>@Model.SubmitterName</h2>
     @for (int i = 0; i < Model.Songs.Count; i++)
     {
