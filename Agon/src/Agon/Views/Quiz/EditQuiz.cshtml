@@ -2,7 +2,7 @@
 
 <form asp-controller="Quiz" asp-action="StartQuiz">
     <input type="hidden" name="_id" value='@Model._id' />
-    <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="Start quiz!" />
+    <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="START QUIZ!" />
 </form>
 
 <h1>Edit your quiz!</h1>
@@ -26,6 +26,7 @@
             </div>
         </div>
     }
+<button class="btn btn-primary" onclick="location.href='@Url.Action("UserLoggedIn", "Home")'">Return to home page</button>
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
 <script src="~/js/SetButtonSize.js"></script>

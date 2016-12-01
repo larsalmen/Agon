@@ -2,15 +2,15 @@
 <!--<p>Du är inloggad som tusan med @Model.Username!</p>-->
 @if (Model.Quizzes.Count == 1)
 {
-    <h1>Min quiz</h1>
+    <h1>My quiz</h1>
 }
 else if (Model.Quizzes.Count > 1)
 {
-    <h1>Mina quizzar</h1>
+    <h1>My quizzes</h1>
 }
 else
 {
-    <h1>Skapa din första quiz!</h1>
+    <h1>Create your first quiz!</h1>
 }
 
 <div class="list-group" style="display:inline-block;">
@@ -34,7 +34,7 @@ else
     }
     <br />
     <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success clearfix">
-        <span class="glyphicon glyphicon-plus"></span> Importera playlist från Spotify
+        <span class="glyphicon glyphicon-plus"></span> Import a playlist from Spotify to create a new quiz!
     </a>
 </div>
 <script src="~/js/RemoveQuiz.js"></script>
