@@ -264,7 +264,7 @@ namespace Agon.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<IActionResult> PlayQuiz(string pin)
+        public async Task<IActionResult> PlayQuiz(string pin, string validusername)
         {
             QuizPlayerVM quizPlayerVM;
             bool pinExists;
@@ -288,7 +288,7 @@ namespace Agon.Controllers
             {
                 try
                 {
-                    quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin);
+                    quizPlayerVM = await AgonManager.CreateQuizPlayerVM(pin, validusername);
                 }
                 catch (MongoException mex)
                 {
@@ -301,15 +301,16 @@ namespace Agon.Controllers
                     return RedirectToAction("Error", "Home");
                 }
 
-
                 string cacheKey = pin;
-                int clientsConnected = _memoryCache.Get<Int32>(cacheKey);
+                var players = _memoryCache.Get<List<string>>(cacheKey);
 
-                if (clientsConnected == 0)
-                    _memoryCache.Set<Int32>(cacheKey, 1);
+                if (players == null)
+                {
+                    players = new List<string>();
+                }
 
-                else
-                    _memoryCache.Set(cacheKey, clientsConnected + 1);
+                players.Add(validusername);
+                _memoryCache.Set<List<string>>(cacheKey, players);
 
                 return View(quizPlayerVM);
             }
@@ -318,6 +319,7 @@ namespace Agon.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> SubmitAnswer(string SubmitterName)
@@ -341,9 +343,11 @@ namespace Agon.Controllers
             }
         }
 
-        public async Task<bool> CheckPin(string pin)
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<bool> CheckPin(string id)
         {
-            return await MongoManager.CheckIfPinExistsAsync(pin, "runningQuizzes");
+            return await MongoManager.CheckIfPinExistsAsync(id, "runningQuizzes");
         }
 
 
@@ -401,52 +405,38 @@ namespace Agon.Controllers
             return View(results.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value));
         }
 
-
-        //AnswerKeyVM GetAnswerKey()
-        //{
-        //    return new AnswerKeyVM
-        //    {
-        //        Songs =
-        //        {
-        //            new AnswerKeySongVM { Artist = "Aqua", Title = "Barbie Girl", Questions = {
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 1 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 1 om Aqua - Barbie Girl", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
-        //                        } },
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 2 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 2 om Aqua - Barbie Girl", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga", SubmitterName = "Pontus", IsCorrect = true },
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Två svar på en fråga B", SubmitterName = "Anders", IsCorrect = true }
-        //                        } },
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 3 om Aqua - Barie Girl", CorrectAnswer = "Rätt svar 3 om Aqua - Barbie Girl", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Tre svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
-        //                        } }
-        //                }
-        //            },
-        //            new AnswerKeySongVM { Artist = "Helloween", Title = "Helloweenlåten med stort H", Questions = {
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 1 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = true }
-        //                        } },
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 2 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Pontus", IsCorrect = false }
-        //                        } },
-        //                    new AnswerKeyQuestionVM { Text = "Fråga 3 om Helloween - Helloweenlåten med stort H", CorrectAnswer = "Helloween - Helloweenlåten med stort H", SubmittedAnswers = {
-        //                            new AnswerKeySubmittedAnswerVM { Answer = "Ett svar på en fråga", SubmitterName = "Anders", IsCorrect = true }
-        //                        } }
-        //                }
-        //            }
-        //        }
-        //    };
-        //}
-
         public IActionResult CheckConnectedPlayers(string id)
         {
             string cacheKey = id;
-            var connectedPlayers = _memoryCache.Get(cacheKey);
+            var connectedPlayers = _memoryCache.Get<List<string>>(cacheKey)?.Count;
 
             return Json(new { connectedPlayers });
+        }
+
+        [AllowAnonymous]
+        public bool IsUsernameAvailable(string quizPin, string username)
+        {
+            var players = _memoryCache.Get<List<string>>(quizPin);
+
+            if (players != null)
+                if (players.Contains(username))
+                {
+                    return false;
+                }
+
+            return true;
         }
         private ActionResult RedirectToError()
         {
             return RedirectToAction("Error", "Home");
+        }
+
+        public IActionResult GetUsernamesOfConnectedPlayers(string id)
+        {
+            string cacheKey = id;
+            var playerNames = _memoryCache.Get<List<string>>(cacheKey).Aggregate((x, y) => $"{x}{Environment.NewLine}{y}");
+
+            return Json(new { playerNames });
         }
     }
 }

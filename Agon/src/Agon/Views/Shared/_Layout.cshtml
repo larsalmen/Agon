@@ -5,8 +5,10 @@
     <title>Agon</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js"></script>
+    <link href="~/css/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/css/jquery-ui.theme.min.css" rel="stylesheet" />
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
     <link href="~/css/agon.css" rel="stylesheet" />
 </head>
 <body>
@@ -29,7 +31,7 @@
             {
                 <ul class="nav navbar-nav">
                     <!--<li class="active"><a asp-controller="Home" asp-action="Index">Home</a></li>-->
-                    <li><a asp-controller="Home" asp-action="UserLoggedIn">Mina quiz</a></li>
+                    <li><a asp-controller="Home" asp-action="UserLoggedIn">My quizzes!</a></li>
                 </ul>
             }
                 @if (User.Identity.IsAuthenticated)

@@ -145,7 +145,7 @@ namespace Agon.Models
 
             do
             {
-                pin = randomizer.Next(9999);
+                pin = randomizer.Next(1000, 9999);
             }
             while (await MongoManager.CheckIfPinExistsAsync(pin.ToString(), "runningQuizzes"));
 
@@ -227,7 +227,6 @@ namespace Agon.Models
 
             var answerkeySongs = new List<AnswerKeySongVM>();
 
-
             int counter = 0;
             for (int i = 0; i < runningQuiz.Songs.Count; i++)
             {
@@ -295,10 +294,11 @@ namespace Agon.Models
             return userVM;
         }
 
-        public static async Task<QuizPlayerVM> CreateQuizPlayerVM(string pin)
+        public static async Task<QuizPlayerVM> CreateQuizPlayerVM(string pin, string username)
         {
 
             var quizPlayerVM = new QuizPlayerVM(JsonConvert.DeserializeObject<RunningQuiz>(await MongoManager.GetOneQuizByPinAsync(pin, "runningQuizzes")));
+            quizPlayerVM.SubmitterName = username;
             return quizPlayerVM;
 
         }

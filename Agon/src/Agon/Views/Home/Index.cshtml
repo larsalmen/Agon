@@ -3,27 +3,82 @@
         <button type="submit" class="btn btn-success btn-lg">Log in with Spotify</button>
     </form>
     <label>Log in with Spotify to create your quiz</label><br /><br />
-    <form asp-controller="Quiz" asp-action="PlayQuiz" method="post" onsubmit="return PlayQuiz();">
+    <form asp-controller="Quiz" asp-action="PlayQuiz" id="quizform" method="post">
         <div class="input-group input-group-lg col-xs-2" style="margin-left:auto;margin-right:auto;min-width:200px;">
-            <input type="text" class="form-control" name="pin" id="pin" placeholder="Enter PIN">
+            <input type="number" class="form-control" name="pin" id="pin" placeholder="Enter PIN">
+            <input type="hidden" name="validusername" id="validusername" value="placeholder" />
             <span class="input-group-btn">
-                <button type="submit" class="btn btn-lg btn-primary">Go!</button>
+                <button type="button" onclick="PlayQuiz();" class="btn btn-lg btn-primary">Go!</button>
             </span>
         </div><!-- /input-group -->
     </form>
 </div>
 <!--<button class="btn btn-primary btn-lg">Enter PIN</button><br />-->
 <label>You have a PIN and want to join a quiz</label>
-@*<script>
+<div id="askForUsername" style="display:none;">
+    <p>Choose a username</p>
+    <p id="error"></p>
+    <input id="username" type="text" />
+</div>
+
+<script>
     function PlayQuiz() {
+        var pin = $("#pin").val();
         $.ajax({
-            url: "/Quiz/CheckPin",
-            data: { 'pin': pin },
-            type: "POST",
-        }).done(function () {       //när anropet är klart gör följande.
-            if (true) {
-                
-            }
+            url: "/Quiz/CheckPin/" + pin,
+            type: "GET",
+            success: GetUsername
         });
     }
-</script>*@
+
+    function GetUsername(pinExists) {
+        if (pinExists) {
+            ShowDialog();
+        }
+        
+    }
+    function ShowDialog() {
+        $("#askForUsername").dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+                "OK": function () {
+                    var username = $('#username').val();
+                    if (username != '' && username != null) {
+                        IsUsernameAvailable(username, $(this))
+                    }
+                }
+            },
+            close: function () {
+                //posta det
+                $('#validusername').val($('#username').val());
+                $("#quizform").submit();
+                //console.log('Hej bebe! = vi borde egentligen posta här');
+
+
+                //ajaxa till backend
+                // om svaret är true stäng dialog och posta
+                //annars nej, säg att det var upptaget och låt användaren försöka igen.
+                //Kolla om username är ledigt
+            }
+        })
+    };
+
+    function IsUsernameAvailable(username, dialog) {
+        $.ajax({
+            url: "/Quiz/IsUsernameAvailable?quizPin=" + $('#pin').val() + "&username=" + username,
+            type: "GET",
+            success: returnValue
+        });
+        function returnValue(result) {
+            if (result) {
+                dialog.dialog("close");
+            } else {
+                $('#error').html("Username is taken, try again.");
+            }
+        }
+    }
+    
+</script>
