@@ -81,7 +81,7 @@ results.addEventListener('click', function (e) {
         }).done(function () {       //när anropet är klart gör följande.
             clicked.children[0].classList.remove('glyphicon-refresh');
             clicked.children[0].classList.add('glyphicon-ok');
-            clicked.children[1].innerHTML = "  Song added &nbsp&nbsp";  //2 spaces för att behålla storlektne
+            clicked.children[1].innerHTML = "Song added";  //2 spaces för att behålla storlektne
             clicked.id = 'has-been-clicked';
         });
     }
