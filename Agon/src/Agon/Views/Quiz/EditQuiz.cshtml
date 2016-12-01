@@ -1,31 +1,79 @@
 ﻿@model Quiz
-
 <form asp-controller="Quiz" asp-action="StartQuiz" id="StartQuizForm">
     <input type="hidden" name="_id" value='@Model._id' />
     <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="START QUIZ!" />
 </form>
-
 <h1>Edit your quiz!</h1>
-@{ int counter = 0;}
 <button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
 <button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span>&nbspSave</button>
-
 <h2><input type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
-    @foreach (var song in Model.Songs)
-    {
-        <div id="@counter" class="RemoveDiv">
-            <div class="container-full">
-                <div class="list-group">
-                    <form asp-controller="Quiz" asp-action="EditSong">
-                        <button class="RemoveSong removeRow btn btn-danger" name="@(counter++)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
-                        <button type="submit" class="btn btn-default" style="min-width:350px">@song.Artist - @song.Title</button>
-                        <div class="btn" style="visibility:hidden">&nbspRemove</div>
-                        <input type="hidden" name="id" value='@Json.Serialize(song)' />
-                    </form>
+@{ int counter = 0;}
+@{ int hasQuestionCounter = 0;}
+@foreach (var song in Model.Songs)
+{
+    <div id="@counter" class="RemoveDiv">
+        <div class="container-full">
+            <div class="list-group">
+                <form asp-controller="Quiz" asp-action="EditSong">
+                    <button class="RemoveSong removeRow btn btn-danger" name="@(counter++)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
+                    <button type="submit" class="btn btn-default" style="min-width:350px">
+                        @song.Artist - @song.Title
+                    </button>
+                    @*<div class="btn" style="visibility:hidden">&nbspRemove</div>*@
+                    @if (song.Questions.Count > 0)
+                    {
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#show-@hasQuestionCounter">
+                            <span class="glyphicon glyphicon-triangle-bottom" style="pointer-events:none;"></span>
+                            Questions(@(song.Questions.Count))
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary" disabled>
+                            <span class="glyphicon glyphicon-triangle-bottom" style="pointer-events:none; visibility:hidden"></span>
+                            Questions(0)
+                        </button>
+                    }
+                    <input type="hidden" name="id" value='@Json.Serialize(song)' />
+                </form>
+                <div class="container">
+
+                    @if (song.Questions.Count > 0)
+                    {
+                        @*<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#show-@hasQuestionCounter">Show questions</button>*@
+                        <div id="show-@(hasQuestionCounter++)" class="collapse">
+                            <div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-right" style="width:50%">Question</th>
+                                            <th class="text-left" style="width:50%">Correct Answer</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var question in song.Questions)
+                                        {
+                                            <tr>
+                                                <td class="text-right" style="width:50%">@question.Text</td>
+                                                <td class="text-left" style="width:50%">@question.CorrectAnswer</td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @*<p>This song doesn't have any questions yet</p>*@
+                    }
                 </div>
             </div>
         </div>
-    }
+    </div>
+}
 <button class="btn btn-primary" onclick="location.href='@Url.Action("UserLoggedIn", "Home")'">Return to home page</button>
 <script src="~/js/SaveQuizAjax.js"></script>
 <script src="~/js/RemoveSongFromQuiz.js"></script>
