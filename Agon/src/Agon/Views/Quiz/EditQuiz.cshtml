@@ -1,4 +1,6 @@
-﻿@model Quiz
+﻿@using Newtonsoft.Json;
+@model Quiz
+
 <form asp-controller="Quiz" asp-action="StartQuiz" id="StartQuizForm">
     <input type="hidden" name="_id" value='@Model._id' />
     <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="START QUIZ!" />
@@ -34,7 +36,7 @@
                             Questions(0)
                         </button>
                     }
-                    <input type="hidden" name="id" value='@Json.Serialize(song)' />
+                    <input type="hidden" name="id" value='@JsonConvert.SerializeObject(song)' />
                 </form>
                 <div class="container">
 
