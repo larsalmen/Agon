@@ -14,7 +14,7 @@
             @foreach (var question in Model.Songs[i].Questions)
             {
                 <p>@question.Text</p>
-                <input type="text" class="form-control" name="answer" />
+                <input type="text" class="form-control" name="answer" autocorrect="off"/>
             }
         </div>
     }
