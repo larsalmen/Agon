@@ -16,6 +16,7 @@ namespace MongoUtils
         const string quizCollection = "Quizzes";
         const string sessionCollection = "session";
         const string answersCollection = "answers";
+        const string errorCollection = "errors";
 
 
         static public string MongoConnection { get; set; }
@@ -47,6 +48,23 @@ namespace MongoUtils
                 throw new MongoException("MongoManager:SaveDocumentAsync. Insert failed.", ex.InnerException);
             }
         }
+
+        public static void LogError(string errorJson)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+            var col = agony.GetCollection<BsonDocument>(errorCollection);
+
+            try
+            {
+                var error = BsonDocument.Parse(errorJson);
+                col.InsertOne(error);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:LogError. Insert error failed.", ex.InnerException);
+            }
+        }
+
         /// <summary>
         /// Parses the incoming JSON string to BSONDocument and saves it to the specified collection.
         /// </summary>

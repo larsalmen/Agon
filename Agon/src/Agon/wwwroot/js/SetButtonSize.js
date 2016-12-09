@@ -9,7 +9,7 @@
         //alert("Den här: " + currentWidth + "Den största: " + widestWidth);
     }
     //sätt alla knappar till den störstas storlek
-    for (var i = 0; i < trackButtons.length; i++) {
+    for (i = 0; i < trackButtons.length; i++) {
         trackButtons[i].style.width = (widestWidth*1.05)+"px";
     }
 });

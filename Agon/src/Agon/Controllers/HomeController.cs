@@ -20,6 +20,8 @@ namespace Agon.Controllers
             var errorVM = new ErrorVM();
             errorVM.ErrorMessage = HttpContext.Session.GetString("error");
 
+            AgonManager.LogError(new LogError(User.Identity.Name, DateTime.Now, errorVM.ErrorMessage));
+
             return View(errorVM);
         }
         public async Task<IActionResult> UserLoggedIn()
