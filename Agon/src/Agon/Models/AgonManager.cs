@@ -169,7 +169,17 @@ namespace Agon.Models
                 await MongoManager.SaveDocumentAsync("runningQuizzes", JsonConvert.SerializeObject(runningQuiz));
             // Generera QuizMasterVM och returnera
 
-            return new QuizMasterVM(runningQuiz);
+            var quizMasterVM = new QuizMasterVM(runningQuiz);
+            StringBuilder songList = new StringBuilder();
+            foreach (var song in quizMasterVM.Songs)
+            {
+                songList.Append(song.SpotifyReferenceID);
+                if (song != quizMasterVM.Songs[quizMasterVM.Songs.Count - 1])
+                    songList.Append(",");
+            }
+            quizMasterVM.SongList = songList.ToString();
+
+            return quizMasterVM;
 
         }
 

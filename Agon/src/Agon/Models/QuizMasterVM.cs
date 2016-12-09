@@ -7,6 +7,8 @@ namespace Agon.Models
 {
     public class QuizMasterVM : RunningQuiz
     {
+        public string SongList { get; set; }
+
         public QuizMasterVM(RunningQuiz runningQuiz) : base()
         {
             Name = runningQuiz.Name;

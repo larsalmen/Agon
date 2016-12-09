@@ -17,20 +17,20 @@
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
     <div id="playbutton">
-        <iframe src="https://embed.spotify.com/?uri=spotify:user:spotify:playlist:3rgsDhGHZxZ9sB9DQWQfuf" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+        <iframe src="https://embed.spotify.com/?uri=spotify:trackset:@Model.Name:@Model.SongList" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
     </div>
     <div id="playListener">
         @for (int i = 0; i < Model.Songs.Count; i++)
         {
             <div class="jumbotron" style="border:solid">
                 <h2>
-                    Song @(i + 1) <button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
-                        <span class="glyphicon glyphicon-play"></span> Play
-                    </button>
+                    Song @(i + 1) @*<button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
+                            <span class="glyphicon glyphicon-play"></span> Play
+                        </button>*@
                 </h2>
 
                 <div class="songPlaceholder" id="songPlaceholder@(i)">
-                    <button name="@(i)" class="btn showbutton">(Show answer)</button>
+                    <button name="@(i)" class="btn showbutton">(Show/Hide answer)</button>
                 </div>
                 <div class="song" id="song@(i)">
                     <h2>@Model.Songs[i].Artist - @Model.Songs[i].Title</h2>
@@ -50,4 +50,4 @@
         <button id="quizID" name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
     </form>
 </div>
-<script src="~/js/UnhideAnswers.js"></script>
+<script src="~/js/ToggleAnswer.js"></script>
