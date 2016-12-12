@@ -24,7 +24,7 @@ namespace Agon.Controllers
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
-        
+
         [HttpGet]
         [HttpPost]
         [AllowAnonymous]
@@ -36,15 +36,7 @@ namespace Agon.Controllers
             var properties = signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
             return Challenge(properties, Provider);
         }
-       
-        [AllowAnonymous]
-        [HttpPost]
-        public string Fail()
-        {
-            return "Fail";
-        }
 
-       
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -53,13 +45,15 @@ namespace Agon.Controllers
             if (remoteError != null)
             {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return View(nameof(Fail));
+                HttpContext.Session.SetString($"error", remoteError);
+                return RedirectToAction("Error", "Home");
             }
 
             var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Fail));
+                HttpContext.Session.SetString($"error", "ExternalLogin info is null.");
+                return RedirectToAction("Error", "Home");
             }
 
             //Sign in the user with this external login provider if the user already has a login.
@@ -67,13 +61,13 @@ namespace Agon.Controllers
             if (signinresult.Succeeded)
             {
                 AgonManager.SetTokensInSession(info, HttpContext.Session);
-
-
+                
                 return RedirectToLocal(returnUrl);
             }
             else if (signinresult.IsNotAllowed || signinresult.IsLockedOut)
             {
-                return RedirectToAction(nameof(Fail));
+                HttpContext.Session.SetString($"error", "User is not allowed or is locked out.");
+                return RedirectToAction("Error", "Home");
             }
             else
             {
@@ -94,14 +88,20 @@ namespace Agon.Controllers
                         return RedirectToLocal(returnUrl);
                     }
                     else
-                        return RedirectToAction(nameof(Fail));
+                    {
+                        HttpContext.Session.SetString($"error", "Sign-in failed.");
+                        return RedirectToAction("Error", "Home");
+                    }
                 }
                 else
-                    return RedirectToAction(nameof(Fail));
+                {
+                    HttpContext.Session.SetString($"error", "New user creation failed.");
+                    return RedirectToAction("Error", "Home");
+                }
             }
 
         }
-       
+
         private IActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -116,7 +116,14 @@ namespace Agon.Controllers
 
         public async Task<IActionResult> Logout()
         {
+            var myCookies = Request.Cookies.Keys;
+            foreach (string cookie in myCookies)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
             await signInManager.SignOutAsync();
+            
             return RedirectToAction("Index", "Home");
         }
     }

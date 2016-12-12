@@ -268,5 +268,47 @@ namespace SpotifyUtils
             }
 
         }
+
+        public static async Task<string> CreateNewPlaylistAsync(SpotifyTokens token, string playListName)
+        {
+            // Partly broken.
+            string spotifyId = "newplaylistId";
+            var endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists";
+            string authHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(SpotifyClientId + ":" + SpotifyClientSecret));
+            var postData = "grant_type=refresh_token";
+            postData += "&refresh_token=" + token.RefreshToken;
+            var data = Encoding.ASCII.GetBytes(postData);
+
+            var request = WebRequest.CreateHttp(endpoint);
+
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Headers.Set("Authorization", authHeader);
+            request.ContentLength = data.Length;
+
+            using (Stream requestStream = request.GetRequestStream())
+            {
+                requestStream.Write(data, 0, data.Length);
+            }
+
+            // Gets the response from Spotify.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                // Get some cool error handling in here.
+            }
+
+            // Reads the streams content into the responseBody variable.
+            var responseBody = "";
+
+            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            {
+                responseBody = reader.ReadToEnd();
+            }
+
+
+            return spotifyId;
+        }
     }
 }

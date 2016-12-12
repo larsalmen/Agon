@@ -15,12 +15,15 @@ namespace Agon.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Error()
         {
             var errorVM = new ErrorVM();
             errorVM.ErrorMessage = HttpContext.Session.GetString("error");
-
-            AgonManager.LogError(new LogError(User.Identity.Name, DateTime.Now, errorVM.ErrorMessage));
+            if (User.Identity.Name != null)
+            {
+                AgonManager.LogError(new LogError(User.Identity.Name, DateTime.Now, errorVM.ErrorMessage));
+            }
 
             return View(errorVM);
         }

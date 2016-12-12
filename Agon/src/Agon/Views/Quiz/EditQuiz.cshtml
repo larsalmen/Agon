@@ -6,7 +6,7 @@
     <input type="submit" id="startQuizButton" class="btn btn-primary btn-block btn-lg" value="START QUIZ!" />
 </form>
 <h1>Edit your quiz!</h1>
-<h2><input type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
+<h2><input class="form-control" type="text" style="text-align:center" id="quizName" value="@Model.Name" /></h2>
 <button class="btn btn-primary" onclick="location.href='@Url.Action("AddSong", "Quiz")'"><span class="glyphicon glyphicon-plus" style="pointer-events:none;"></span>Add song</button>
 <button class="btn btn-success" id="saveQuiz"><span class="glyphicon glyphicon-floppy-disk" style="pointer-events:none;"></span><div id="saveStatus" style="float:right">&nbspSave</div></button>
 <br /><br />

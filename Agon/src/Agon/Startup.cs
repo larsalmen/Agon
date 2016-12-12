@@ -61,7 +61,7 @@ namespace Agon
                 ClientId = SpotifyManager.SpotifyClientId,
                 ClientSecret = SpotifyManager.SpotifyClientSecret,
                 SaveTokens = true,
-                Scope = { "playlist-read-private" }
+                Scope = { "playlist-read-private playlist-modify-private" }                
             });
 
             app.UseMvc(routes =>

@@ -16,7 +16,8 @@
 <div id="actualQuiz" class="hiddenQuiz">
     <h1>@Model.Name</h1>
     <h3>By @Model.Owner</h3>
-    <div id="playbutton">
+    <button type="button" id="togglespotifyplaybutton" class="isDesktop btn showbutton">Show/Hide Spotify remote</button>
+    <div id="playbutton" class="isDesktop" style="display: block;">
         <iframe src="https://embed.spotify.com/?uri=spotify:trackset:@Model.Name:@Model.SongList" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
     </div>
     <div id="playListener">
@@ -24,11 +25,14 @@
         {
             <div class="jumbotron" style="border:solid">
                 <h2>
-                    Song @(i + 1) @*<button type="button" class="btn btn-primary play-button" preview-url="@(Model.Songs[i].PreviewUrl)">
-                            <span class="glyphicon glyphicon-play"></span> Play
-                        </button>*@
+                    Song @(i + 1) <button type="button" class="btn btn-primary play-button isMobile" preview-url="@(Model.Songs[i].PreviewUrl)" style="display: none;">
+                        <span class="glyphicon glyphicon-play"></span> Play
+                    </button>
                 </h2>
 
+                @*<div class="isMobile" style="display: none;">
+                    <iframe src="https://embed.spotify.com/?uri=spotify:track:@Model.Songs[i].SpotifyReferenceID" frameborder="0" allowtransparency="true"></iframe>
+                </div>*@
                 <div class="songPlaceholder" id="songPlaceholder@(i)">
                     <button name="@(i)" class="btn showbutton">(Show/Hide answer)</button>
                 </div>
@@ -50,4 +54,5 @@
         <button id="quizID" name="quizID" value="@Model._id" class="btn btn-lg btn-primary">Review answers</button>
     </form>
 </div>
-<script src="~/js/ToggleAnswer.js"></script>
+<script src="~/js/ToggleVisibility.js"></script>
+<script src="~/js/CheckDevice.js"></script>

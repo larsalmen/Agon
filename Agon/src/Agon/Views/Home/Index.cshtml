@@ -1,8 +1,11 @@
 ﻿<div class="container-fluid text-center">
-    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+    <form asp-controller="Account" asp-action="ExternalLogin" method="post" style="display:inline;">
         <button type="submit" class="btn btn-success btn-lg">Log in with Spotify</button>
     </form>
-    <label>Log in with Spotify to create your quiz</label><br /><br />
+    <br />
+    <label>Log in with Spotify to create your quiz.</label><br />
+    <label>To change user go to <a href="https://accounts.spotify.com" target="_blank">Spotify Account</a> and log out first.</label>
+    <br /><br />
     <form asp-controller="Quiz" asp-action="PlayQuiz" id="quizform" method="post">
         <div class="input-group input-group-lg col-xs-2" style="margin-left:auto;margin-right:auto;min-width:200px;">
             <input type="number" class="form-control" name="pin" id="pin" placeholder="Enter PIN">
@@ -12,6 +15,8 @@
             </span>
         </div><!-- /input-group -->
     </form>
+
+
 </div>
 <!--<button class="btn btn-primary btn-lg">Enter PIN</button><br />-->
 <label>You have a PIN and want to join a quiz</label>
@@ -35,7 +40,7 @@
         if (pinExists) {
             ShowDialog();
         }
-        
+
     }
     function ShowDialog() {
         $("#askForUsername").dialog({
@@ -80,5 +85,5 @@
             }
         }
     }
-    
+
 </script>

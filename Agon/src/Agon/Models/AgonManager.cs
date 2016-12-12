@@ -320,5 +320,46 @@ namespace Agon.Models
             return quizPlayerVM;
 
         }
+        public static async Task ExportPlaylistAsync(SpotifyTokens token, string quizId)
+        {
+            var quizToExport = JsonConvert.DeserializeObject<Quiz>(await MongoManager.GetOneQuizAsync(quizId, "Quizzes"));
+            var playlistName = quizToExport.Name;
+            var spotifyUsername = quizToExport.Owner;
+
+            // Check if it already exists, in that case warn user? Replace all songs?
+           
+            //
+            var listOfPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
+            bool playlistExists = false;
+            foreach (var item in listOfPlaylists.Items)
+            {
+                if (item.Name == playlistName)
+                {
+                    playlistExists = true;
+                    break;
+                }
+            }
+            if (!playlistExists)
+            {
+                // Create a new spotifyPlaylist with the chosen name if it does not exist.
+                // In SpotifyManager.
+                var newPlaylistId = await SpotifyManager.CreateNewPlaylistAsync(token, playlistName);
+
+
+                // Add tracks to the newly created playlist.
+                // In SpotifyManager.
+                StringBuilder tracks = new StringBuilder();
+                foreach (var song in quizToExport.Songs)
+                {
+                    tracks.Append(song.SpotifyReferenceID);
+                    if (song != quizToExport.Songs[quizToExport.Songs.Count - 1])
+                        tracks.Append(",");
+                }
+
+            }
+
+
+
+        }
     }
 }
