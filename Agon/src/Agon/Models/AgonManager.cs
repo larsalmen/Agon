@@ -111,6 +111,7 @@ namespace Agon.Models
             quiz._id = Guid.NewGuid().ToString();
 
             quiz.Name = viewModel.Name;
+            quiz.PlaylistRef = viewModel.SpotifyRef;
             quiz.Owner = token.Username;
 
             int counter = 0;
@@ -354,7 +355,10 @@ namespace Agon.Models
                 }
                 var tracksAddResult = SpotifyManager.AddTracksToPlaylist(token, newPlaylistId, tracks.ToString());
                 if (tracksAddResult == "Created")
+                {
                     createResult = true;
+                    await MongoManager.UpdateSpotifyPlaylistRefAsync(quizId, newPlaylistId);
+                }
             }
             return createResult;
         }

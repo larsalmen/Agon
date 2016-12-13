@@ -377,6 +377,30 @@ namespace MongoUtils
                 throw new MongoException("MongoManager:GetQuizFromSession. Retrieving from session storage failed.", ex.InnerException);
             }
         }
+
+        /// <summary>
+        /// Updates on field 
+        /// </summary>
+        /// <param name="quizId"></param>
+        /// <param name="collection"></param>
+        public static async Task UpdateSpotifyPlaylistRefAsync(string quizId, string newSpotifyPlaylistRef)
+        {
+            var agony = mongoClient.GetDatabase(databaseName);
+
+            var col = agony.GetCollection<BsonDocument>(quizCollection);
+
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", quizId);
+            var update = Builders<BsonDocument>.Update.Set("PlaylistRef", newSpotifyPlaylistRef);
+            try
+            {
+                await col.FindOneAndUpdateAsync(filter, update);
+            }
+            catch (Exception ex)
+            {
+                throw new MongoException("MongoManager:UpdateSpotifyPlaylistRefAsync. Update failed.", ex.InnerException);
+            }
+        }
+
         public static async Task<string> GetAllAnswerFormsAsync(string runningQuizId, string collection)
         {
             var agony = mongoClient.GetDatabase(databaseName);
@@ -435,5 +459,6 @@ namespace MongoUtils
                 throw new MongoException("MongoManager:ClearOldAnswers. Document removal failed.", ex.InnerException);
             }
         }
+
     }
 }

@@ -20,6 +20,10 @@
     <div id="playbutton" class="isDesktop" style="display: block;">
         <iframe src="https://embed.spotify.com/?uri=spotify:trackset:@Model.Name:@Model.SongList" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
     </div>
+    @*This works, but for some reason the playback on mobile devices won´t start, it just shows the playlist...*@
+    @*<div class="isMobile" style="display: none;">
+        <iframe src="https://embed.spotify.com/?uri=spotify:user:@Model.Owner:playlist:@Model.PlaylistRef" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>    
+    </div>*@
     <div id="playListener">
         @for (int i = 0; i < Model.Songs.Count; i++)
         {
@@ -30,9 +34,6 @@
                     </button>
                 </h2>
 
-                @*<div class="isMobile" style="display: none;">
-                    <iframe src="https://embed.spotify.com/?uri=spotify:track:@Model.Songs[i].SpotifyReferenceID" frameborder="0" allowtransparency="true"></iframe>
-                </div>*@
                 <div class="songPlaceholder" id="songPlaceholder@(i)">
                     <button name="@(i)" class="btn showbutton">(Show/Hide answer)</button>
                 </div>

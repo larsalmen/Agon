@@ -16,6 +16,7 @@ namespace Agon.Models
             Pin = runningQuiz.Pin;
             Songs = runningQuiz.Songs;
             _id = runningQuiz._id;
+            PlaylistRef = runningQuiz.PlaylistRef;
         }
     }
 }
