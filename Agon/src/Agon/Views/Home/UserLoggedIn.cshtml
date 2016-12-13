@@ -18,21 +18,19 @@ else
     {
         <div id="@(quiz._id)" class="RemoveDivQuiz">
             <div class="container-full">
-                <div class="list-group">
-                    <form asp-controller="Quiz" asp-action="EditQuiz">
-                        <button class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
-                        <button class="btn btn-default" style="min-width:350px">@quiz.Name</button>
-                        <div class="btn" style="visibility:hidden">&nbspRemove</div>
+                <div class="list-group btn-group">
+                    <button type="button" class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
+                    <form asp-controller="Quiz" asp-action="EditQuiz" class="btn-group">
                         <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
                         <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
+                        <button type="button" class="btn btn-default" style="min-width:350px">@quiz.Name</button>
                     </form>
-                    <form asp-controller="Home" asp-action="ExportQuizToSpotify">
-                        <button class="btn btn-success" type="submit" name="id" value="@(quiz._id)">Export to Spoodify<span class="glyphicon glyphicon-cloud-upload"></span></button>
+                    <form asp-controller="Home" asp-action="ExportQuizToSpotify" class="btn-group">
+                        <button class="btn btn-success" type="submit" name="id" value="@(quiz._id)">Export to Spotify<span class="glyphicon glyphicon-cloud-upload"></span></button>
                     </form>
                 </div>
             </div>
         </div>
-
     }
     <br />
     <a asp-controller="Home" asp-action="ViewPlaylists" class="list-group-item list-group-item-success clearfix">
