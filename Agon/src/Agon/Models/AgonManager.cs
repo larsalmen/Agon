@@ -320,46 +320,43 @@ namespace Agon.Models
             return quizPlayerVM;
 
         }
-        public static async Task ExportPlaylistAsync(SpotifyTokens token, string quizId)
+        public static async Task<bool> ExportPlaylistAsync(SpotifyTokens token, string quizId)
         {
+            bool createResult = false;
             var quizToExport = JsonConvert.DeserializeObject<Quiz>(await MongoManager.GetOneQuizAsync(quizId, "Quizzes"));
             var playlistName = quizToExport.Name;
-            var spotifyUsername = quizToExport.Owner;
-
             // Check if it already exists, in that case warn user? Replace all songs?
-           
-            //
-            var listOfPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
-            bool playlistExists = false;
-            foreach (var item in listOfPlaylists.Items)
-            {
-                if (item.Name == playlistName)
-                {
-                    playlistExists = true;
-                    break;
-                }
-            }
-            if (!playlistExists)
+            // The way this works now is that a new playlist is created with the same name if it already exists.
+            //var listOfPlaylists = await SpotifyManager.GetAllUserPlaylists(token);
+            //bool playlistExists = false;
+            //foreach (var item in listOfPlaylists.Items)
+            //{
+            //    if (item.Name == playlistName)
+            //    {
+            //        playlistExists = true;
+            //        break;
+            //    }
+            //}
+            if (true/*!playlistExists*/)
             {
                 // Create a new spotifyPlaylist with the chosen name if it does not exist.
                 // In SpotifyManager.
                 var newPlaylistId = await SpotifyManager.CreateNewPlaylistAsync(token, playlistName);
-
 
                 // Add tracks to the newly created playlist.
                 // In SpotifyManager.
                 StringBuilder tracks = new StringBuilder();
                 foreach (var song in quizToExport.Songs)
                 {
-                    tracks.Append(song.SpotifyReferenceID);
+                    tracks.Append("spotify:track:" + song.SpotifyReferenceID);
                     if (song != quizToExport.Songs[quizToExport.Songs.Count - 1])
                         tracks.Append(",");
                 }
-
+                var tracksAddResult = SpotifyManager.AddTracksToPlaylist(token, newPlaylistId, tracks.ToString());
+                if (tracksAddResult == "Created")
+                    createResult = true;
             }
-
-
-
+            return createResult;
         }
     }
 }

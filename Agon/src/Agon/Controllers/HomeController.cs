@@ -63,6 +63,13 @@ namespace Agon.Controllers
 
             return View(viewModel);
         }
+        public async Task<IActionResult> ExportQuizToSpotify(string id)
+        {
+            var token = AgonManager.GetSpotifyTokens(this);
+            var result = await AgonManager.ExportPlaylistAsync(token, id);
+
+            return RedirectToAction(nameof(UserLoggedIn));
+        }
 
 
     }

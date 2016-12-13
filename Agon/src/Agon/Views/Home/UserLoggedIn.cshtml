@@ -27,6 +27,9 @@ else
                         <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
                         <!--<a asp-controller="Quiz" asp-action="EditQuiz" class="list-group-item">@quiz.Name</a>-->
                     </form>
+                    <form asp-controller="Home" asp-action="ExportQuizToSpotify">
+                        <button type="submit" name="id" value="@(quiz._id)">Export to Spoodify</button>
+                    </form>
                 </div>
             </div>
         </div>

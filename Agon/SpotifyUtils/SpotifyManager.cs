@@ -271,18 +271,15 @@ namespace SpotifyUtils
 
         public static async Task<string> CreateNewPlaylistAsync(SpotifyTokens token, string playListName)
         {
-            // Partly broken.
-            string spotifyId = "newplaylistId";
             var endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists";
-            string authHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(SpotifyClientId + ":" + SpotifyClientSecret));
-            var postData = "grant_type=refresh_token";
-            postData += "&refresh_token=" + token.RefreshToken;
+            string authHeader = "Authorization: Bearer " + token.AccessToken;
+            var postData = JsonConvert.SerializeObject(new { name = playListName, @public = false });
             var data = Encoding.ASCII.GetBytes(postData);
 
             var request = WebRequest.CreateHttp(endpoint);
 
             request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentType = "application/json";
             request.Headers.Set("Authorization", authHeader);
             request.ContentLength = data.Length;
 
@@ -294,7 +291,7 @@ namespace SpotifyUtils
             // Gets the response from Spotify.
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if ((response.StatusCode != HttpStatusCode.OK) || (response.StatusCode != HttpStatusCode.Created))
             {
                 // Get some cool error handling in here.
             }
@@ -307,8 +304,31 @@ namespace SpotifyUtils
                 responseBody = reader.ReadToEnd();
             }
 
+            var def = new { id = "" };
+            var playlistObject = JsonConvert.DeserializeAnonymousType(responseBody, def);
 
-            return spotifyId;
+            return playlistObject.id;
+        }
+
+        public static string AddTracksToPlaylist(SpotifyTokens token, string newPlaylistId, string tracks)
+        {
+            var endpoint = @"https://api.spotify.com/v1/users/" + token.Username + "/playlists/" + newPlaylistId + "/tracks?uris=" + tracks;
+            string authHeader = "Authorization: Bearer " + token.AccessToken;
+            
+            var request = WebRequest.CreateHttp(endpoint);
+
+            request.Method = "POST";
+            request.Headers.Set("Authorization", authHeader);
+            // Gets the response from Spotify.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                // Get some cool error handling in here.
+            }
+            var responseCode = response.StatusCode.ToString();
+
+            return responseCode;
         }
     }
 }
