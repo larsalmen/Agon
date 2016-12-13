@@ -21,9 +21,9 @@ else
                 <div class="list-group btn-group">
                     <button type="button" class="RemoveQuiz removeRow btn btn-danger" name="@(quiz._id)"><span class="glyphicon glyphicon-trash" style="pointer-events:none;"></span>&nbspRemove</button>
                     <form asp-controller="Quiz" asp-action="EditQuiz" class="btn-group">
+                        <button type="submit" class="btn btn-default" style="min-width:350px">@quiz.Name</button>
                         <input type="hidden" name="@nameof(Quiz.Name)" value="@quiz.Name" />
                         <input type="hidden" name="@nameof(Quiz._id)" value="@quiz._id" />
-                        <button type="button" class="btn btn-default" style="min-width:350px">@quiz.Name</button>
                     </form>
                     <form asp-controller="Home" asp-action="ExportQuizToSpotify" class="btn-group">
                         <button class="btn btn-success" type="submit" name="id" value="@(quiz._id)">Export to Spotify<span class="glyphicon glyphicon-cloud-upload"></span></button>
